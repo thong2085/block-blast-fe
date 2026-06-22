@@ -87,6 +87,9 @@ export default function App() {
     if (combo > 1) setComboEvent({ key: Date.now(), count: combo });
   }, [combo]);
 
+  // Bump this whenever block color format changes to invalidate old sessions
+  const SESSION_VERSION = 3;
+
   // Persist mid-game state so closing the tab doesn't lose progress
   useEffect(() => {
     if (!mode || isGameOver || levelComplete) {
@@ -94,7 +97,7 @@ export default function App() {
       return;
     }
     try {
-      localStorage.setItem('bb_session', JSON.stringify({ mode, level, board, blocks, score, combo, powerups }));
+      localStorage.setItem('bb_session', JSON.stringify({ v: SESSION_VERSION, mode, level, board, blocks, score, combo, powerups }));
     } catch {}
   }, [board, blocks, score, combo, mode, level, isGameOver, levelComplete]);
 
@@ -102,7 +105,10 @@ export default function App() {
   useEffect(() => {
     try {
       const s = JSON.parse(localStorage.getItem('bb_session') ?? 'null');
-      if (!s?.mode || !Array.isArray(s?.board)) return;
+      if (!s?.mode || !Array.isArray(s?.board) || s.v !== SESSION_VERSION) {
+        localStorage.removeItem('bb_session');
+        return;
+      }
       setMode(s.mode);
       setLevel(s.level ?? 1);
       restore(s);

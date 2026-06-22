@@ -31,53 +31,53 @@ button { font-family: inherit; }
 #root { width: 100%; }
 
 /* ===== Per-theme backgrounds (keyed on data-block) ===== */
-/* jelly = Sakura (default, also used when no theme set) */
+/* jelly = Sakura · hồng/tím pastel */
 [data-block="jelly"] {
   background:
     radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
     linear-gradient(180deg, #bcd8f8 0%, #d8b0e8 14%, #f0a0cc 28%, #ffacc4 42%, #ffb8b0 58%, #ffd4c0 88%, #ffe0d0 100%);
 }
-/* gem = Rose Gold */
-[data-block="gem"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #f5d86c 0%, #f0b850 14%, #e89848 28%, #f0a070 42%, #f8b890 58%, #fdd0b0 88%, #fff0e0 100%);
-}
-/* candy = Candy */
-[data-block="candy"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #c084fc 0%, #d946ef 14%, #e879f9 28%, #f0abfc 42%, #f5c8fe 58%, #fae8ff 88%, #fdf4ff 100%);
-}
-/* soft = Cotton Candy */
-[data-block="soft"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #38bdf8 0%, #22d3ee 14%, #67e8f9 28%, #a5f3fc 42%, #bae6fd 58%, #e0f2fe 88%, #f0f9ff 100%);
-}
-/* classic = Peach */
-[data-block="classic"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #fb923c 0%, #fdba74 14%, #fed7aa 28%, #ffedd5 42%, #fff7ed 58%, #fef9f0 88%, #fffcf8 100%);
-}
-/* neon = Lavender */
-[data-block="neon"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #a78bfa 0%, #c084fc 14%, #d8b4fe 28%, #e9d5ff 42%, #f3e8ff 58%, #f9f0ff 88%, #fdf8ff 100%);
-}
-/* pixel = Strawberry */
-[data-block="pixel"] {
-  background:
-    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #f87171 0%, #fca5a5 14%, #fecaca 28%, #fee2e2 42%, #fff1f2 58%, #fff5f5 88%, #fffafa 100%);
-}
-/* glass = Dreamy */
+/* glass = Ocean · xanh biển/ngọc */
 [data-block="glass"] {
   background:
     radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    linear-gradient(160deg, #c7d2fe 0%, #e9d5ff 20%, #fbcfe8 40%, #fef3c7 60%, #d1fae5 80%, #bfdbfe 100%);
+    linear-gradient(180deg, #0369a1 0%, #0891b2 14%, #06b6d4 28%, #22d3ee 42%, #67e8f9 60%, #a5f3fc 80%, #e0f9ff 100%);
+}
+/* soft = Forest · xanh lá */
+[data-block="soft"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #4ade80 0%, #22c55e 14%, #16a34a 26%, #4ade80 42%, #86efac 60%, #bbf7d0 80%, #dcfce7 100%);
+}
+/* candy = Sunset · cam/tím hoàng hôn */
+[data-block="candy"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.45) 0%, transparent 55%),
+    linear-gradient(180deg, #7c3aed 0%, #c026d3 12%, #f43f5e 24%, #f97316 38%, #fb923c 52%, #fbbf24 68%, #fde68a 84%, #fff7ed 100%);
+}
+/* neon = Cosmic · chàm/tím vũ trụ */
+[data-block="neon"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.45) 0%, transparent 55%),
+    linear-gradient(180deg, #6366f1 0%, #818cf8 14%, #a5b4fc 28%, #c7d2fe 44%, #ddd6fe 62%, #ede9fe 80%, #f5f3ff 100%);
+}
+/* pixel = Desert · cát/đất/terracotta */
+[data-block="pixel"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #92400e 0%, #b45309 14%, #d97706 28%, #f59e0b 42%, #fbbf24 56%, #fde68a 72%, #fef3c7 88%, #fffbeb 100%);
+}
+/* gem = Tropical · xanh nhiệt đới rực rỡ */
+[data-block="gem"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #065f46 0%, #059669 14%, #10b981 28%, #34d399 44%, #6ee7b7 60%, #a7f3d0 78%, #d1fae5 92%, #ecfdf5 100%);
+}
+/* classic = Volcano · đỏ/cam lửa */
+[data-block="classic"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #f87171 0%, #ef4444 12%, #dc2626 24%, #f97316 38%, #fb923c 52%, #fbbf24 66%, #fde68a 82%, #fff7ed 100%);
 }
 
 /* ===== App shell ===== */
@@ -356,7 +356,7 @@ button { font-family: inherit; }
 .cell--preview {
   background: var(--cc, rgba(255,255,255,0.5));
   opacity: 0.82;
-  border-radius: 5px;
+  border-radius: 9%;
   box-shadow:
     inset 0 3px 0 rgba(255,255,255,0.45),
     inset 0 -3px 0 rgba(0,0,0,0.22);
@@ -1154,98 +1154,165 @@ button { font-family: inherit; }
 }
 
 /* ===== Block Visual Styles per Theme ===== */
-/* base classic style is defined in .cell--filled above */
+/* Preview = same shape as filled, slightly transparent */
+[data-block="jelly"] .cell--preview {
+  border-radius: 50%;
+  transform: scale(0.86);
+  background-color: var(--cc, #e11d48);
+  background-image: radial-gradient(circle 16% at 30% 24%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 100%);
+}
+[data-block="glass"] .cell--preview {
+  border-radius: 10%; border: 1.5px solid rgba(255,255,255,0.6);
+  background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.02) 100%), var(--cc);
+}
+[data-block="soft"] .cell--preview {
+  border-radius: 20%;
+  background: linear-gradient(160deg, rgba(255,255,255,0.35) 0%, rgba(0,0,0,0.06) 100%), var(--cc);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.12), inset 0 2px 4px rgba(255,255,255,0.35);
+}
+[data-block="candy"] .cell--preview {
+  border-radius: 12%;
+  background: linear-gradient(118deg, transparent 0%, rgba(255,255,255,0.5) 28%, transparent 42%, transparent 100%), var(--cc);
+}
+[data-block="neon"] .cell--preview {
+  border-radius: 7%;
+  background: linear-gradient(135deg, rgba(10,8,40,0.32) 0%, rgba(20,10,60,0.42) 100%), var(--cc);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--cc, #6366f1) 70%, transparent), 0 0 14px color-mix(in srgb, var(--cc, #6366f1) 40%, transparent);
+}
+[data-block="pixel"] .cell--preview {
+  border-radius: 0;
+  background: var(--cc);
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.3), 3px 3px 0 rgba(0,0,0,0.2);
+}
+[data-block="gem"] .cell--preview {
+  border-radius: 5%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.1) 25%, transparent 45%, rgba(0,0,0,0.1) 100%), var(--cc);
+}
+[data-block="classic"] .cell--preview {
+  border-radius: 9%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(0,0,0,0.08) 100%), var(--cc);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), 0 4px 0 rgba(0,0,0,0.2);
+}
 
-/* --- Jelly (Sakura) — big glossy dome, very round --- */
+/* --- Jelly (Sakura) — bong bóng tròn, ánh sáng kép --- */
 [data-block="jelly"] .cell--filled {
-  border-radius: 8px;
+  border-radius: 50%;
+  transform: scale(0.86);
+  background-color: var(--cc, #e11d48);
+  background-image:
+    radial-gradient(circle 16% at 30% 24%, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0) 100%),
+    radial-gradient(circle 60% at 50% 50%, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.10) 100%);
   box-shadow:
-    inset 0 8px 0 rgba(255,255,255,0.72),
-    inset 0 -5px 0 rgba(0,0,0,0.36),
-    inset 5px 0 0 rgba(255,255,255,0.44),
-    inset -5px 0 0 rgba(0,0,0,0.24),
-    0 4px 10px rgba(0,0,0,0.28);
+    0 5px 14px rgba(0,0,0,0.22),
+    0 2px 5px rgba(0,0,0,0.14),
+    inset 0 -3px 5px rgba(0,0,0,0.18);
 }
 
-/* --- Gem / Crystal (Rose Gold) — sharp faceted faces --- */
-[data-block="gem"] .cell--filled {
-  border-radius: 2px;
+/* --- Glass (Ocean) — kính mờ frosted, viền trắng --- */
+[data-block="glass"] .cell--filled {
+  border-radius: 10%;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.04) 55%, rgba(0,0,0,0.06) 100%),
+    var(--cc, rgba(6,182,212,0.8));
   box-shadow:
-    inset 0 3px 0 rgba(255,255,255,0.95),
-    inset 0 -5px 0 rgba(0,0,0,0.52),
-    inset 4px 0 0 rgba(255,255,255,0.65),
-    inset -5px 0 0 rgba(0,0,0,0.46),
-    0 5px 14px rgba(0,0,0,0.42);
-  filter: saturate(1.4) brightness(1.08);
+    inset 0 1px 3px rgba(255,255,255,0.95),
+    inset 0 -1px 2px rgba(0,0,0,0.08),
+    0 2px 10px rgba(0,0,0,0.14);
+  border: 1.5px solid rgba(255,255,255,0.75);
+  filter: brightness(1.08) saturate(0.85);
 }
 
-/* --- Candy (Candy) — cartoon shiny --- */
-[data-block="candy"] .cell--filled {
-  border-radius: 7px;
-  box-shadow:
-    inset 0 7px 0 rgba(255,255,255,0.78),
-    inset 0 -4px 0 rgba(0,0,0,0.3),
-    inset 4px 0 0 rgba(255,255,255,0.52),
-    inset -3px 0 0 rgba(0,0,0,0.18),
-    0 3px 8px rgba(0,0,0,0.24);
-  filter: saturate(1.2) brightness(1.06);
-}
-
-/* --- Soft / Cloud (Cotton Candy) — pillowy, barely 3D --- */
+/* --- Soft (Forest) — khối phồng mềm, bóng khuếch tán --- */
 [data-block="soft"] .cell--filled {
-  border-radius: 10px;
+  border-radius: 20%;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.05) 45%, rgba(0,0,0,0.1) 100%),
+    var(--cc, #22c55e);
   box-shadow:
-    inset 0 4px 0 rgba(255,255,255,0.65),
-    inset 0 -3px 0 rgba(0,0,0,0.16),
-    inset 2px 0 0 rgba(255,255,255,0.4),
-    inset -2px 0 0 rgba(0,0,0,0.1),
-    0 4px 12px rgba(0,0,0,0.16);
-  filter: brightness(1.1) saturate(0.95);
+    0 6px 0 rgba(0,0,0,0.16),
+    0 8px 18px rgba(0,0,0,0.14),
+    inset 0 3px 6px rgba(255,255,255,0.5),
+    inset 0 -2px 4px rgba(0,0,0,0.15);
 }
 
-/* --- Classic (Peach) — inherits base .cell--filled, no override --- */
+/* --- Candy (Sunset) — kẹo bóng, dải sáng chéo góc --- */
+[data-block="candy"] .cell--filled {
+  border-radius: 12%;
+  background:
+    linear-gradient(118deg,
+      rgba(255,255,255,0.0) 0%,
+      rgba(255,255,255,0.75) 28%,
+      rgba(255,255,255,0.0) 42%,
+      rgba(0,0,0,0.0) 100%
+    ),
+    linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(0,0,0,0.08) 100%),
+    var(--cc, #f97316);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.22),
+    0 5px 12px rgba(0,0,0,0.2),
+    inset 0 1px 2px rgba(255,255,255,0.5);
+  filter: saturate(1.3) brightness(1.05);
+}
 
-/* --- Neon (Lavender) — glowing edges --- */
+/* --- Neon (Cosmic) — màu nổi bật, viền phát sáng --- */
 [data-block="neon"] .cell--filled {
-  border-radius: 4px;
+  border-radius: 7%;
+  background:
+    linear-gradient(135deg, rgba(10,8,40,0.38) 0%, rgba(20,10,60,0.48) 100%),
+    var(--cc, #6366f1);
   box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.42),
-    inset 0 -3px 0 rgba(0,0,0,0.2),
-    0 0 8px rgba(200,160,255,0.6),
-    0 0 20px rgba(180,120,255,0.45),
-    0 0 36px rgba(160,80,255,0.25),
-    0 3px 8px rgba(0,0,0,0.22);
-  filter: saturate(1.8) brightness(1.18);
+    0 0 6px color-mix(in srgb, var(--cc, #6366f1) 80%, transparent),
+    0 0 18px color-mix(in srgb, var(--cc, #6366f1) 50%, transparent),
+    0 0 36px color-mix(in srgb, var(--cc, #6366f1) 25%, transparent),
+    inset 0 0 5px rgba(255,255,255,0.15);
+  filter: brightness(1.2) saturate(1.8);
 }
 
-/* --- Pixel (Strawberry) — sharp square, retro --- */
+/* --- Pixel (Desert) — vuông phẳng pixel art, bóng cứng --- */
 [data-block="pixel"] .cell--filled {
   border-radius: 0;
+  background: var(--cc, #d97706);
   box-shadow:
-    inset 0 4px 0 rgba(255,255,255,0.62),
-    inset 0 -4px 0 rgba(0,0,0,0.45),
-    inset 4px 0 0 rgba(255,255,255,0.38),
-    inset -4px 0 0 rgba(0,0,0,0.38),
-    0 4px 0 rgba(0,0,0,0.32);
-  filter: saturate(1.3);
+    inset 3px 3px 0 rgba(255,255,255,0.45),
+    inset -3px -3px 0 rgba(0,0,0,0.4),
+    4px 4px 0 rgba(0,0,0,0.28);
+  filter: saturate(1.2) contrast(1.1);
 }
 
-/* --- Glass (Dreamy) — semi-transparent, ethereal --- */
-[data-block="glass"] .cell--filled {
-  border-radius: 6px;
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.45) 0%,
-    var(--cc, rgba(200,150,255,0.7)) 60%
-  ) !important;
+/* --- Gem (Tropical) — đá quý facet, gradient góc mạnh --- */
+[data-block="gem"] .cell--filled {
+  border-radius: 5%;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,0.9) 0%,
+      rgba(255,255,255,0.2) 22%,
+      transparent 40%,
+      rgba(0,0,0,0.15) 70%,
+      rgba(255,255,255,0.12) 100%
+    ),
+    var(--cc, #10b981);
   box-shadow:
-    inset 0 5px 0 rgba(255,255,255,0.75),
-    inset 0 -3px 0 rgba(0,0,0,0.14),
-    inset 3px 0 0 rgba(255,255,255,0.5),
-    inset -2px 0 0 rgba(0,0,0,0.08),
-    0 4px 18px rgba(150,100,220,0.32),
-    0 8px 28px rgba(100,50,200,0.16);
-  filter: saturate(1.1) brightness(1.14);
+    inset 1px 1px 3px rgba(255,255,255,0.8),
+    inset -1px -1px 3px rgba(0,0,0,0.35),
+    0 5px 16px rgba(0,0,0,0.28);
+  filter: saturate(1.7) brightness(1.1);
+}
+
+/* --- Classic (Volcano) — nút 3D bấm được, mặt trên sáng --- */
+[data-block="classic"] .cell--filled {
+  border-radius: 9%;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.42) 0%,
+      rgba(255,255,255,0.08) 40%,
+      rgba(0,0,0,0.12) 100%
+    ),
+    var(--cc, #ef4444);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 5px 0 rgba(0,0,0,0.28),
+    0 6px 12px rgba(0,0,0,0.18);
 }
 
 /* ===== Power-Up Bar ===== */
