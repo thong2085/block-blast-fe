@@ -6,8 +6,10 @@ export default function Board({
   board, blocks, draggingIndex, previewPos,
   clearedCells, flashCells, placedCells,
   onBoardPointerMove, onBoardPointerUp, onBoardPointerLeave,
+  boardRef: externalBoardRef,
 }) {
-  const boardRef = useRef(null);
+  const internalRef = useRef(null);
+  const boardRef = externalBoardRef ?? internalRef;
 
   const draggingBlock = draggingIndex !== null ? blocks[draggingIndex] : null;
 
@@ -27,16 +29,18 @@ export default function Board({
   }, []);
 
   const handlePointerMove = useCallback((e) => {
-    if (!boardRef.current) return;
+    // Touch is handled at window level in App (adjusted for ghost visual offset)
+    if (!boardRef.current || e.pointerType === 'touch') return;
     const { row, col } = getCoords(e);
     onBoardPointerMove?.(row, col);
-  }, [getCoords, onBoardPointerMove]);
+  }, [boardRef, getCoords, onBoardPointerMove]);
 
   const handlePointerUp = useCallback((e) => {
-    if (!boardRef.current) return;
+    // Touch is handled at window level in App (adjusted for ghost visual offset)
+    if (!boardRef.current || e.pointerType === 'touch') return;
     const { row, col } = getCoords(e);
     onBoardPointerUp?.(row, col);
-  }, [getCoords, onBoardPointerUp]);
+  }, [boardRef, getCoords, onBoardPointerUp]);
 
   return (
     <div

@@ -15,6 +15,7 @@ import { useSound } from './hooks/useSound';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { getLevelTarget, saveMaxLevel } from './game/levels';
 import { getTheme } from './game/themes';
+import { BOARD_SIZE } from './game/board';
 import './App.css';
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
 
   const { play, muted, toggleMute } = useSound();
   const ghostRef = useRef(null);
+  const boardRef = useRef(null);
 
   useEffect(() => {
     if (mode === 'level' && !levelComplete && !isGameOver && score >= levelTarget) {
@@ -82,13 +84,51 @@ export default function App() {
     updateGhost(e.clientX, e.clientY);
   }, [isPaused, isGameOver, levelComplete, dragRef, setDraggingIndex, updateGhost]);
 
+  // For touch: ghost visual top = fingerY - ghostHeight * 1.3 (CSS transform)
+  // Board placement must use the same adjusted Y so preview matches what user sees
+  const getTouchAdjustedCoords = useCallback((clientX, clientY) => {
+    if (!boardRef.current) return null;
+    const ghostH = ghostRef.current?.getBoundingClientRect().height ?? 0;
+    const adjustedY = clientY - ghostH * 1.3;
+    const rect = boardRef.current.getBoundingClientRect();
+    const col = Math.floor((clientX - rect.left) / (rect.width  / BOARD_SIZE));
+    const row = Math.floor((adjustedY  - rect.top)  / (rect.height / BOARD_SIZE));
+    return { row, col };
+  }, []);
+
   useEffect(() => {
     const onMove = (e) => {
       if (!dragRef.current.active) return;
       updateGhost(e.clientX, e.clientY);
+      if (e.pointerType === 'touch') {
+        const coords = getTouchAdjustedCoords(e.clientX, e.clientY);
+        if (coords && coords.row >= 0 && coords.row < BOARD_SIZE && coords.col >= 0 && coords.col < BOARD_SIZE) {
+          setPreviewPos(coords);
+        } else {
+          setPreviewPos(null);
+        }
+      }
     };
-    const onUp = () => {
+    const onUp = (e) => {
       if (!dragRef.current.active) return;
+      if (e.pointerType === 'touch') {
+        const coords = getTouchAdjustedCoords(e.clientX, e.clientY);
+        const idx = dragRef.current.blockIndex;
+        dragRef.current.active = false;
+        setDraggingIndex(null);
+        setPreviewPos(null);
+        if (coords) {
+          const result = tryPlaceBlock(idx, coords.row, coords.col);
+          if (result) {
+            play('place');
+            if (result.cleared > 0) {
+              setTimeout(() => play('clear'), 80);
+              if (result.nextCombo > 1) setTimeout(() => play('combo', result.nextCombo), 300);
+            }
+          }
+        }
+        return;
+      }
       dragRef.current.active = false;
       setDraggingIndex(null);
       setPreviewPos(null);
@@ -99,7 +139,7 @@ export default function App() {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
     };
-  }, [dragRef, setDraggingIndex, setPreviewPos, updateGhost]);
+  }, [dragRef, setDraggingIndex, setPreviewPos, updateGhost, getTouchAdjustedCoords, tryPlaceBlock, play]);
 
   const handleBoardPointerMove = useCallback((row, col) => {
     if (!dragRef.current.active) return;
@@ -237,6 +277,7 @@ export default function App() {
               onBoardPointerMove={handleBoardPointerMove}
               onBoardPointerUp={handleBoardPointerUp}
               onBoardPointerLeave={handleBoardPointerLeave}
+              boardRef={boardRef}
             />
             <BlockTray
               blocks={blocks}
