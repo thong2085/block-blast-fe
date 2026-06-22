@@ -3,6 +3,7 @@ export const THEMES = [
   // 0 — Sakura (Level 1, 9…)
   {
     name: 'Sakura',
+    blockStyle: 'jelly',
     colors: [
       ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
       ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
@@ -20,6 +21,7 @@ export const THEMES = [
   // 1 — Rose Gold (Level 2, 10…)
   {
     name: 'Rose Gold',
+    blockStyle: 'gem',
     colors: [
       ['#fef9c3', '#f59e0b'],  // yellow-100 → amber-500
       ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
@@ -37,6 +39,7 @@ export const THEMES = [
   // 2 — Candy (Level 3, 11…)
   {
     name: 'Candy',
+    blockStyle: 'candy',
     colors: [
       ['#fdf4ff', '#e879f9'],  // fuchsia-50 → fuchsia-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
@@ -54,6 +57,7 @@ export const THEMES = [
   // 3 — Cotton Candy (Level 4, 12…)
   {
     name: 'Cotton Candy',
+    blockStyle: 'soft',
     colors: [
       ['#dbeafe', '#60a5fa'],  // blue-100 → blue-400
       ['#cffafe', '#22d3ee'],  // cyan-100 → cyan-400
@@ -71,6 +75,7 @@ export const THEMES = [
   // 4 — Peach (Level 5, 13…)
   {
     name: 'Peach',
+    blockStyle: 'classic',
     colors: [
       ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
       ['#fef3c7', '#fbbf24'],  // amber-100 → amber-400
@@ -88,6 +93,7 @@ export const THEMES = [
   // 5 — Lavender (Level 6, 14…)
   {
     name: 'Lavender',
+    blockStyle: 'neon',
     colors: [
       ['#ede9fe', '#a78bfa'],  // violet-100 → violet-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
@@ -105,6 +111,7 @@ export const THEMES = [
   // 6 — Strawberry (Level 7, 15…)
   {
     name: 'Strawberry',
+    blockStyle: 'pixel',
     colors: [
       ['#ffe4e6', '#f87171'],  // rose-100 → red-400
       ['#fee2e2', '#fca5a5'],  // red-100 → red-300
@@ -122,6 +129,7 @@ export const THEMES = [
   // 7 — Dreamy (Level 8, 16…)
   {
     name: 'Dreamy',
+    blockStyle: 'glass',
     colors: [
       ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400

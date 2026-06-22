@@ -293,7 +293,7 @@ export default function App() {
   }
 
   return (
-    <div className="app" style={themeVars}>
+    <div className="app" style={themeVars} data-block={theme.blockStyle ?? 'classic'}>
       <header className="app-header">
         <button className="btn btn-icon" onClick={handleBackToMenu} title="Menu">
           <ArrowLeft size={18} strokeWidth={2.5} />

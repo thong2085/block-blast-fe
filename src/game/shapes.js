@@ -107,11 +107,11 @@ export const SHAPE_WEIGHTS = {
   t_d: 4, t_u: 4, t_r: 4, t_l: 4,
   s_h: 3, s_v: 3, z_h: 3, z_v: 3,
   llong_r: 3, llong_l: 3, llong_u: 3, llong_d: 3,
-  plus: 3,
-  rect2x3: 2, rect3x2: 2,
+  plus: 2,
+  rect2x3: 1, rect3x2: 1,
   line5_h: 2, line5_v: 2,
-  lbig_dr: 2, lbig_dl: 2, lbig_ur: 2, lbig_ul: 2,
-  lbig_ld: 2, lbig_lu: 2, lbig_rd: 2, lbig_ru: 2,
+  lbig_dr: 1, lbig_dl: 1, lbig_ur: 1, lbig_ul: 1,
+  lbig_ld: 1, lbig_lu: 1, lbig_rd: 1, lbig_ru: 1,
   square3: 1,
 };
 

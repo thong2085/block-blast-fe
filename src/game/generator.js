@@ -19,7 +19,6 @@ function weightedRandom(shapes, weights) {
   return shapes[shapes.length - 1];
 }
 
-
 function getDifficultyWeights(score) {
   if (score < 500) return SHAPE_WEIGHTS;
 
@@ -31,6 +30,7 @@ function getDifficultyWeights(score) {
       line4_h: 6, line4_v: 6,
       t_d: 6, t_u: 6, t_r: 6, t_l: 6,
       llong_r: 5, llong_l: 5, llong_u: 5, llong_d: 5,
+      plus: 2,
     };
   }
 
@@ -40,27 +40,31 @@ function getDifficultyWeights(score) {
     line2_h: 2, line2_v: 2,
     line3_h: 4, line3_v: 4,
     line4_h: 7, line4_v: 7,
-    line5_h: 5, line5_v: 5,
-    square2: 4, square3: 3,
+    line5_h: 4, line5_v: 4,
+    square2: 4, square3: 2,
     t_d: 6, t_u: 6, t_r: 6, t_l: 6,
     l_dr: 6, l_dl: 6, l_ur: 6, l_ul: 6,
-    plus: 5,
-    rect2x3: 4, rect3x2: 4,
-    lbig_dr: 4, lbig_dl: 4, lbig_ur: 4, lbig_ul: 4,
-    lbig_ld: 4, lbig_lu: 4, lbig_rd: 4, lbig_ru: 4,
+    llong_r: 5, llong_l: 5, llong_u: 5, llong_d: 5,
+    plus: 3,
+    rect2x3: 2, rect3x2: 2,
+    lbig_dr: 2, lbig_dl: 2, lbig_ur: 2, lbig_ul: 2,
+    lbig_ld: 2, lbig_lu: 2, lbig_rd: 2, lbig_ru: 2,
   };
 }
 
 export function generateBlocks(board, score = 0, colors) {
   const weights = getDifficultyWeights(score);
+
+  // Only generate shapes that can actually be placed on the current board.
+  // This prevents instant-game-over from receiving unplaceable large blocks.
   const placeable = ALL_SHAPES.filter(s => hasAnyMove(board, [{ ...s, color: '#fff' }]));
   const pool = placeable.length > 0 ? placeable : ALL_SHAPES;
 
   const [c0, c1, c2] = pick3Colors(colors);
 
   return [
-    { ...weightedRandom(pool, weights),       color: c0 },
-    { ...weightedRandom(ALL_SHAPES, weights), color: c1 },
-    { ...weightedRandom(ALL_SHAPES, weights), color: c2 },
+    { ...weightedRandom(pool, weights), color: c0 },
+    { ...weightedRandom(pool, weights), color: c1 },
+    { ...weightedRandom(pool, weights), color: c2 },
   ];
 }
