@@ -42,12 +42,14 @@ export default function App() {
     lastGained, newBlocksKey,
     previewPos, setPreviewPos,
     draggingIndex, setDraggingIndex,
-    dragRef, tryPlaceBlock, pause, resume, restart,
+    dragRef, placeableBlocks,
+    tryPlaceBlock, pause, resume, restart, restore,
   } = useGame(theme.colors);
 
   const { play, muted, toggleMute } = useSound();
   const ghostRef = useRef(null);
   const boardRef = useRef(null);
+  const vibrate  = (pattern) => navigator.vibrate?.(pattern);
 
   useEffect(() => {
     if (mode === 'level' && !levelComplete && !isGameOver && score >= levelTarget) {
@@ -78,6 +80,30 @@ export default function App() {
     if (combo > 1) setComboEvent({ key: Date.now(), count: combo });
   }, [combo]);
 
+  // Persist mid-game state so closing the tab doesn't lose progress
+  useEffect(() => {
+    if (!mode || isGameOver || levelComplete) {
+      localStorage.removeItem('bb_session');
+      return;
+    }
+    try {
+      localStorage.setItem('bb_session', JSON.stringify({ mode, level, board, blocks, score, combo }));
+    } catch {}
+  }, [board, blocks, score, combo, mode, level, isGameOver, levelComplete]);
+
+  // Restore on first page-load (runs once, after first render)
+  useEffect(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem('bb_session') ?? 'null');
+      if (!s?.mode || !Array.isArray(s?.board)) return;
+      setMode(s.mode);
+      setLevel(s.level ?? 1);
+      restore(s);
+    } catch {
+      localStorage.removeItem('bb_session');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const updateGhost = useCallback((x, y) => {
     if (ghostRef.current) {
       ghostRef.current.style.left = `${x}px`;
@@ -88,13 +114,13 @@ export default function App() {
   const handleBlockPointerDown = useCallback((e, index) => {
     if (isPaused || isGameOver || levelComplete) return;
     e.preventDefault();
-    // Release implicit pointer capture so Board receives pointermove/pointerup on iOS
     if (e.target.hasPointerCapture?.(e.pointerId)) {
       e.target.releasePointerCapture(e.pointerId);
     }
     dragRef.current = { active: true, blockIndex: index };
     setDraggingIndex(index);
     updateGhost(e.clientX, e.clientY);
+    document.body.style.cursor = 'grabbing';
   }, [isPaused, isGameOver, levelComplete, dragRef, setDraggingIndex, updateGhost]);
 
   // Convert pointer position → board (row, col) using ghost visual top-left corner.
@@ -121,13 +147,15 @@ export default function App() {
     const board = boardRef.current;
 
     const doPlace = () => {
+      document.body.style.cursor = '';
       const result = tryPlaceBlock(idx, row, col);
       setDraggingIndex(null);
       if (!result) return;
       play('place');
+      vibrate(12);
       if (result.cleared > 0) {
-        setTimeout(() => play('clear'), 80);
-        if (result.nextCombo > 1) setTimeout(() => play('combo', result.nextCombo), 300);
+        setTimeout(() => { play('clear'); vibrate(result.boardClear ? 80 : 35); }, 80);
+        if (result.nextCombo > 1) setTimeout(() => { play('combo', result.nextCombo); vibrate([15, 8, 25]); }, 300);
       }
     };
 
@@ -188,6 +216,7 @@ export default function App() {
         dragRef.current.active = false;
         setDraggingIndex(null);
         setPreviewPos(null);
+        document.body.style.cursor = '';
       }
     };
     window.addEventListener('pointermove', onMove);
@@ -318,6 +347,7 @@ export default function App() {
               blocks={blocks}
               draggingIndex={draggingIndex}
               newBlocksKey={newBlocksKey}
+              placeableBlocks={placeableBlocks}
               onBlockPointerDown={handleBlockPointerDown}
             />
           </>

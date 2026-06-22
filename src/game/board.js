@@ -59,6 +59,15 @@ export function hasAnyMove(board, blocks) {
   return false;
 }
 
+export function isBlockPlaceable(board, block) {
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      if (canPlace(board, block, r, c)) return true;
+    }
+  }
+  return false;
+}
+
 export function getCellsToHighlight(rows, cols) {
   const set = new Set();
   for (const r of rows) {

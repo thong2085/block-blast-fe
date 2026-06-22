@@ -388,6 +388,16 @@ button { font-family: inherit; }
 
 .block-slot--used    { border-color: transparent; }
 .block-slot--dragging { opacity: 0.22; transform: scale(0.95); }
+.block-slot--dim {
+  opacity: 0.3;
+  filter: grayscale(0.55) brightness(1.1);
+  pointer-events: none;
+}
+.block-slot--dim:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(220,130,170,0.35) !important;
+}
 
 @keyframes slotPopIn {
   from { opacity: 0; transform: scale(0.4) translateY(14px); }
