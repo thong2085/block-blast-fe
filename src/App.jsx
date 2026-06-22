@@ -73,6 +73,10 @@ export default function App() {
   const handleBlockPointerDown = useCallback((e, index) => {
     if (isPaused || isGameOver || levelComplete) return;
     e.preventDefault();
+    // Release implicit pointer capture so Board receives pointermove/pointerup on iOS
+    if (e.target.hasPointerCapture?.(e.pointerId)) {
+      e.target.releasePointerCapture(e.pointerId);
+    }
     dragRef.current = { active: true, blockIndex: index };
     setDraggingIndex(index);
     updateGhost(e.clientX, e.clientY);
