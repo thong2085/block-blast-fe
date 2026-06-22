@@ -1,18 +1,17 @@
 // Each color entry: [lightShade, darkShade] → linear-gradient(135deg, light, dark)
-// Light end = white/near-white; dark end = medium pastel (not saturated-dark)
 export const THEMES = [
   // 0 — Sakura (Level 1, 9…)
   {
     name: 'Sakura',
     colors: [
-      ['#ffffff', '#fda4af'],  // white → soft rose
-      ['#ffffff', '#f9a8d4'],  // white → pink
-      ['#ffffff', '#fb7185'],  // white → rose
-      ['#fff5fa', '#fca5a5'],  // cream → salmon
-      ['#ffffff', '#e879f9'],  // white → fuchsia
-      ['#fffbeb', '#fbbf24'],  // cream → amber accent
-      ['#ffffff', '#f472b6'],  // white → hot pink
-      ['#fffbf2', '#fdba74'],  // cream → peach
+      ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
+      ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
+      ['#ffd6e0', '#f43f5e'],  // rose-100+ → rose-500
+      ['#ffe4e6', '#f87171'],  // rose-100 → red-400
+      ['#fdf4ff', '#d946ef'],  // fuchsia-50 → fuchsia-500
+      ['#fef9c3', '#eab308'],  // yellow-100 → yellow-500
+      ['#fce7f3', '#ec4899'],  // pink-100 → pink-500
+      ['#fff7ed', '#fb923c'],  // orange-50 → orange-400
     ],
     board:  'rgba(255, 210, 228, 0.5)',
     empty:  'rgba(255, 245, 250, 0.5)',
@@ -22,14 +21,14 @@ export const THEMES = [
   {
     name: 'Rose Gold',
     colors: [
-      ['#ffffff', '#fbbf24'],  // white → amber
-      ['#fffbeb', '#fdba74'],  // cream → peach orange
-      ['#ffffff', '#fca5a5'],  // white → salmon
-      ['#fff7ed', '#fde68a'],  // warm white → yellow
-      ['#ffffff', '#fed7aa'],  // white → light orange
-      ['#fffbf0', '#f9a8d4'],  // cream → pink
-      ['#ffffff', '#fda4af'],  // white → soft pink
-      ['#fffef0', '#fcd34d'],  // cream → golden
+      ['#fef9c3', '#f59e0b'],  // yellow-100 → amber-500
+      ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
+      ['#ffe4e6', '#f87171'],  // rose-100 → red-400
+      ['#fef3c7', '#fbbf24'],  // amber-100 → amber-400
+      ['#ffedd5', '#fdba74'],  // orange-100 → orange-300+
+      ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
+      ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
+      ['#fef9c3', '#fcd34d'],  // yellow-100 → amber-300
     ],
     board:  'rgba(255, 225, 200, 0.5)',
     empty:  'rgba(255, 248, 240, 0.5)',
@@ -39,14 +38,14 @@ export const THEMES = [
   {
     name: 'Candy',
     colors: [
-      ['#ffffff', '#f0abfc'],  // white → violet pink
-      ['#fdf4ff', '#d8b4fe'],  // cream → lavender
-      ['#ffffff', '#f5d0fe'],  // white → orchid
-      ['#f5f3ff', '#c4b5fd'],  // lavender white → periwinkle
-      ['#ffffff', '#f9a8d4'],  // white → pink
-      ['#ffffff', '#e879f9'],  // white → fuchsia
-      ['#faf5ff', '#a78bfa'],  // lilac white → violet
-      ['#ffffff', '#fda4af'],  // white → rose
+      ['#fdf4ff', '#e879f9'],  // fuchsia-50 → fuchsia-400
+      ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
+      ['#fae8ff', '#d946ef'],  // fuchsia-100 → fuchsia-500
+      ['#ede9fe', '#a78bfa'],  // violet-100 → violet-400
+      ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
+      ['#fdf4ff', '#c026d3'],  // fuchsia-50 → fuchsia-600
+      ['#ede9fe', '#8b5cf6'],  // violet-100 → violet-500
+      ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
     ],
     board:  'rgba(240, 210, 255, 0.5)',
     empty:  'rgba(252, 245, 255, 0.5)',
@@ -56,14 +55,14 @@ export const THEMES = [
   {
     name: 'Cotton Candy',
     colors: [
-      ['#ffffff', '#93c5fd'],  // white → sky blue
-      ['#f0feff', '#67e8f9'],  // ice white → cyan
-      ['#ffffff', '#86efac'],  // white → mint green
-      ['#f0f9ff', '#7dd3fc'],  // sky white → blue
-      ['#ecfeff', '#a5f3fc'],  // ice white → teal
-      ['#f0fdf4', '#6ee7b7'],  // mint white → emerald
-      ['#ffffff', '#bae6fd'],  // white → light blue
-      ['#f0fffc', '#5eead4'],  // white → teal
+      ['#dbeafe', '#60a5fa'],  // blue-100 → blue-400
+      ['#cffafe', '#22d3ee'],  // cyan-100 → cyan-400
+      ['#dcfce7', '#4ade80'],  // green-100 → green-400
+      ['#e0f2fe', '#38bdf8'],  // sky-100 → sky-400
+      ['#cffafe', '#06b6d4'],  // cyan-100 → cyan-500
+      ['#d1fae5', '#34d399'],  // emerald-100 → emerald-400
+      ['#e0f2fe', '#7dd3fc'],  // sky-100 → sky-300+
+      ['#ccfbf1', '#2dd4bf'],  // teal-100 → teal-400
     ],
     board:  'rgba(200, 238, 255, 0.5)',
     empty:  'rgba(240, 252, 255, 0.5)',
@@ -73,14 +72,14 @@ export const THEMES = [
   {
     name: 'Peach',
     colors: [
-      ['#ffffff', '#fdba74'],  // white → peach
-      ['#fffbeb', '#fde68a'],  // cream → lemon
-      ['#fff7ed', '#fed7aa'],  // warm white → apricot
-      ['#ffffff', '#fca5a5'],  // white → salmon
-      ['#fffbf0', '#fbbf24'],  // cream → honey
-      ['#ffffff', '#fb923c'],  // white → tangerine
-      ['#fffef5', '#fcd34d'],  // cream → yellow
-      ['#ffffff', '#fda4af'],  // white → blush
+      ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
+      ['#fef3c7', '#fbbf24'],  // amber-100 → amber-400
+      ['#ffedd5', '#fdba74'],  // orange-100 → orange-300+
+      ['#ffe4e6', '#f87171'],  // rose-100 → red-400
+      ['#fef9c3', '#f59e0b'],  // yellow-100 → amber-500
+      ['#ffedd5', '#f97316'],  // orange-100 → orange-500
+      ['#fef9c3', '#fcd34d'],  // yellow-100 → amber-300
+      ['#ffe4e6', '#fda4af'],  // rose-100 → rose-300
     ],
     board:  'rgba(255, 220, 195, 0.5)',
     empty:  'rgba(255, 245, 235, 0.5)',
@@ -90,14 +89,14 @@ export const THEMES = [
   {
     name: 'Lavender',
     colors: [
-      ['#ffffff', '#c4b5fd'],  // white → lavender
-      ['#f5f3ff', '#ddd6fe'],  // lilac white → periwinkle
-      ['#ffffff', '#a78bfa'],  // white → violet
-      ['#faf5ff', '#d8b4fe'],  // lavender cream → purple
-      ['#ffffff', '#f0abfc'],  // white → orchid
-      ['#f5f3ff', '#c084fc'],  // lilac white → purple
-      ['#ffffff', '#e9d5ff'],  // white → pale violet
-      ['#fdf4ff', '#f9a8d4'],  // cream → pink
+      ['#ede9fe', '#a78bfa'],  // violet-100 → violet-400
+      ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
+      ['#ede9fe', '#8b5cf6'],  // violet-100 → violet-500
+      ['#f3e8ff', '#a855f7'],  // purple-100 → purple-500
+      ['#fdf4ff', '#e879f9'],  // fuchsia-50 → fuchsia-400
+      ['#f3e8ff', '#d8b4fe'],  // purple-100 → purple-300+
+      ['#ede9fe', '#c4b5fd'],  // violet-100 → violet-300+
+      ['#fce7f3', '#f9a8d4'],  // pink-100 → pink-300
     ],
     board:  'rgba(220, 210, 255, 0.5)',
     empty:  'rgba(245, 242, 255, 0.5)',
@@ -107,14 +106,14 @@ export const THEMES = [
   {
     name: 'Strawberry',
     colors: [
-      ['#ffffff', '#fca5a5'],  // white → strawberry pink
-      ['#fff5f5', '#fecaca'],  // blush white → light red
-      ['#ffffff', '#fda4af'],  // white → rose
-      ['#fff5f7', '#f9a8d4'],  // cream → pink
-      ['#ffffff', '#fb7185'],  // white → rose red
-      ['#fff0f2', '#fda4af'],  // cream → soft red
-      ['#ffffff', '#fbbf24'],  // white → amber accent
-      ['#fffbeb', '#fdba74'],  // cream → peach
+      ['#ffe4e6', '#f87171'],  // rose-100 → red-400
+      ['#fee2e2', '#fca5a5'],  // red-100 → red-300
+      ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
+      ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
+      ['#ffe4e6', '#f43f5e'],  // rose-100 → rose-500
+      ['#fee2e2', '#ef4444'],  // red-100 → red-500
+      ['#fef9c3', '#f59e0b'],  // yellow-100 → amber-500
+      ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
     ],
     board:  'rgba(255, 205, 210, 0.5)',
     empty:  'rgba(255, 245, 245, 0.5)',
@@ -124,14 +123,14 @@ export const THEMES = [
   {
     name: 'Dreamy',
     colors: [
-      ['#ffffff', '#f9a8d4'],  // white → pink
-      ['#f5f3ff', '#d8b4fe'],  // lilac → lavender
-      ['#f0f9ff', '#93c5fd'],  // sky → blue
-      ['#f0fdf4', '#86efac'],  // mint → green
-      ['#fffbeb', '#fde68a'],  // cream → yellow
-      ['#fff7ed', '#fdba74'],  // warm → peach
-      ['#faf5ff', '#c4b5fd'],  // lilac → violet
-      ['#fdf4ff', '#f0abfc'],  // cream → fuchsia
+      ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
+      ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
+      ['#dbeafe', '#60a5fa'],  // blue-100 → blue-400
+      ['#dcfce7', '#4ade80'],  // green-100 → green-400
+      ['#fef3c7', '#fbbf24'],  // amber-100 → amber-400
+      ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
+      ['#ede9fe', '#a78bfa'],  // violet-100 → violet-400
+      ['#fdf4ff', '#e879f9'],  // fuchsia-50 → fuchsia-400
     ],
     board:  'rgba(255, 220, 240, 0.5)',
     empty:  'rgba(255, 248, 252, 0.5)',
