@@ -10,6 +10,9 @@ import ModeSelect from './components/ModeSelect';
 import Leaderboard from './components/Leaderboard';
 import BlockPreview from './components/BlockPreview';
 import MusicPanel from './components/MusicPanel';
+import ParticlesCanvas from './components/ParticlesCanvas';
+import ComboEffect from './components/ComboEffect';
+import Confetti from './components/Confetti';
 import { useGame } from './hooks/useGame';
 import { useSound } from './hooks/useSound';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
@@ -24,6 +27,8 @@ export default function App() {
   const [levelComplete, setLevelComplete] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+  const [clearEvent, setClearEvent] = useState(null);
+  const [comboEvent, setComboEvent] = useState(null);
 
   const ytPlayer = useYouTubePlayer();
 
@@ -64,6 +69,14 @@ export default function App() {
   useEffect(() => {
     if (isGameOver) play('gameover');
   }, [isGameOver]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (clearedCells.size > 0) setClearEvent({ key: Date.now(), cells: new Set(clearedCells) });
+  }, [clearedCells]);
+
+  useEffect(() => {
+    if (combo > 1) setComboEvent({ key: Date.now(), count: combo });
+  }, [combo]);
 
   const updateGhost = useCallback((x, y) => {
     if (ghostRef.current) {
@@ -338,6 +351,9 @@ export default function App() {
           changeVolume={ytPlayer.changeVolume}
         />
       )}
+      <ParticlesCanvas clearEvent={clearEvent} boardRef={boardRef} />
+      {comboEvent && <ComboEffect key={comboEvent.key} count={comboEvent.count} />}
+      {levelComplete && <Confetti />}
     </div>
   );
 }
