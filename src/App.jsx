@@ -5,7 +5,6 @@ import BlockTray from './components/BlockTray';
 import ScorePanel from './components/ScorePanel';
 import GameOverModal from './components/GameOverModal';
 import PauseModal from './components/PauseModal';
-import LevelComplete from './components/LevelComplete';
 import ModeSelect from './components/ModeSelect';
 import Leaderboard from './components/Leaderboard';
 import BlockPreview from './components/BlockPreview';
@@ -17,7 +16,7 @@ import Confetti from './components/Confetti';
 import { useGame } from './hooks/useGame';
 import { useSound } from './hooks/useSound';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
-import { getLevelTarget, saveMaxLevel } from './game/levels';
+import { getLevelTarget } from './game/levels';
 import { getTheme } from './game/themes';
 import { BOARD_SIZE } from './game/board';
 import './App.css';
@@ -57,10 +56,14 @@ export default function App() {
   useEffect(() => {
     if (mode === 'level' && !levelComplete && !isGameOver && score >= levelTarget) {
       setLevelComplete(true);
-      saveMaxLevel(level + 1);
       play('clear');
+      setTimeout(() => {
+        setLevel(l => l + 1);
+        setLevelComplete(false);
+        restart();
+      }, 1500);
     }
-  }, [score, mode, levelTarget, levelComplete, isGameOver, level, play]);
+  }, [score, mode, levelTarget, levelComplete, isGameOver, level, play, restart]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -254,16 +257,16 @@ export default function App() {
     restart();
   }, [restart]);
 
-  const handleNextLevel = useCallback(() => {
-    setLevel(l => l + 1);
-    setLevelComplete(false);
-    restart();
-  }, [restart]);
-
   const handleRetryLevel = useCallback(() => {
     setLevelComplete(false);
     restart();
   }, [restart]);
+
+  const handleGameOverRestart = useCallback(() => {
+    if (mode === 'level') setLevel(1);
+    setLevelComplete(false);
+    restart();
+  }, [mode, restart]);
 
   const handleBackToMenu = useCallback(() => {
     setMode(null);
@@ -393,11 +396,8 @@ export default function App() {
       {isPaused && !isGameOver && !levelComplete && (
         <PauseModal onResume={resume} onRestart={handleRetryLevel} />
       )}
-      {levelComplete && (
-        <LevelComplete level={level} score={score} onNext={handleNextLevel} onRetry={handleRetryLevel} onMenu={handleBackToMenu} />
-      )}
       {isGameOver && !levelComplete && (
-        <GameOverModal score={score} bestScore={bestScore} onRestart={handleRetryLevel} mode={mode} />
+        <GameOverModal score={score} bestScore={bestScore} onRestart={handleGameOverRestart} mode={mode} />
       )}
       {showMusic && (
         <MusicPanel

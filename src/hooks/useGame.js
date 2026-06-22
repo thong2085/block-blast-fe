@@ -77,13 +77,13 @@ export function useGame(colors) {
     const placed = new Set(block.cells.map(([dr, dc]) => `${row + dr},${col + dc}`));
 
     const cleared = new Set();
-    rows.forEach(r => { for (let c = 0; c < 8; c++) cleared.add(`${r},${c}`); });
-    cols.forEach(c => { for (let r = 0; r < 8; r++) cleared.add(`${r},${c}`); });
+    rows.forEach(r => { for (let c = 0; c < BOARD_SIZE; c++) cleared.add(`${r},${c}`); });
+    cols.forEach(c => { for (let r = 0; r < BOARD_SIZE; r++) cleared.add(`${r},${c}`); });
 
     const finalBoard = hasClear ? clearLines(newBoard, rows, cols) : newBoard;
 
-    // Board clear bonus: +360 if the entire board is empty after clearing
-    const boardClearBonus = hasClear && finalBoard.every(r => r.every(c => c === null)) ? 360 : 0;
+    // Board clear bonus: +3600 if the entire board is empty after clearing
+    const boardClearBonus = hasClear && finalBoard.every(r => r.every(c => c === null)) ? 3600 : 0;
 
     const newBlocksList = blocks.map((b, i) => (i === blockIndex ? null : b));
     const allPlaced = newBlocksList.every(b => b === null);
@@ -116,14 +116,14 @@ export function useGame(colors) {
     if (nextScore > initialBestRef.current) setIsNewBest(true);
 
     // --- Earn power-ups on score milestones ---
-    const t500  = Math.floor(nextScore / 500)  > Math.floor(score / 500);
-    const t1000 = Math.floor(nextScore / 1000) > Math.floor(score / 1000);
-    const t2000 = Math.floor(nextScore / 2000) > Math.floor(score / 2000);
-    if (t500 || t1000 || t2000) {
+    const t5000  = Math.floor(nextScore / 5000)  > Math.floor(score / 5000);
+    const t10000 = Math.floor(nextScore / 10000) > Math.floor(score / 10000);
+    const t20000 = Math.floor(nextScore / 20000) > Math.floor(score / 20000);
+    if (t5000 || t10000 || t20000) {
       setPowerups(p => ({
-        bomb:      t500  ? Math.min(p.bomb + 1, 5)      : p.bomb,
-        line:      t1000 ? Math.min(p.line + 1, 3)      : p.line,
-        colorBomb: t2000 ? Math.min(p.colorBomb + 1, 2) : p.colorBomb,
+        bomb:      t5000  ? Math.min(p.bomb + 1, 5)      : p.bomb,
+        line:      t10000 ? Math.min(p.line + 1, 3)      : p.line,
+        colorBomb: t20000 ? Math.min(p.colorBomb + 1, 2) : p.colorBomb,
       }));
     }
 

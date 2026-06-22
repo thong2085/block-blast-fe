@@ -20,35 +20,33 @@ function weightedRandom(shapes, weights) {
 }
 
 function getDifficultyWeights(score) {
-  if (score < 500) return SHAPE_WEIGHTS;
+  // Ngưỡng cao hơn để chơi thoải mái nhiều level đầu
+  if (score < 2000) return SHAPE_WEIGHTS;
 
-  if (score < 1500) {
+  if (score < 5000) {
+    // Tăng nhẹ block trung: line4, T, L-long — không đột ngột
     return {
       ...SHAPE_WEIGHTS,
-      single: 4,
-      line2_h: 4, line2_v: 4,
-      line4_h: 6, line4_v: 6,
-      t_d: 6, t_u: 6, t_r: 6, t_l: 6,
-      llong_r: 5, llong_l: 5, llong_u: 5, llong_d: 5,
-      plus: 2,
+      single: 5,
+      line4_h: 5, line4_v: 5,
+      t_d: 5, t_u: 5, t_r: 5, t_l: 5,
+      llong_r: 4, llong_l: 4, llong_u: 4, llong_d: 4,
     };
   }
 
+  // Hard: chỉ dùng cho người chơi điểm rất cao
   return {
     ...SHAPE_WEIGHTS,
-    single: 1,
-    line2_h: 2, line2_v: 2,
-    line3_h: 4, line3_v: 4,
-    line4_h: 7, line4_v: 7,
-    line5_h: 4, line5_v: 4,
-    square2: 4, square3: 2,
+    single: 2,
+    line2_h: 3, line2_v: 3,
+    line4_h: 6, line4_v: 6,
+    line5_h: 3, line5_v: 3,
+    square3: 2,
     t_d: 6, t_u: 6, t_r: 6, t_l: 6,
-    l_dr: 6, l_dl: 6, l_ur: 6, l_ul: 6,
     llong_r: 5, llong_l: 5, llong_u: 5, llong_d: 5,
     plus: 3,
     rect2x3: 2, rect3x2: 2,
     lbig_dr: 2, lbig_dl: 2, lbig_ur: 2, lbig_ul: 2,
-    lbig_ld: 2, lbig_lu: 2, lbig_rd: 2, lbig_ru: 2,
   };
 }
 

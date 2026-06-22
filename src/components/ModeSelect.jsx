@@ -1,10 +1,6 @@
 import { Trophy, Infinity } from 'lucide-react';
-import { getMaxUnlockedLevel, getLevelTarget } from '../game/levels';
 
 export default function ModeSelect({ onSelect }) {
-  const maxLevel = getMaxUnlockedLevel();
-  const nextTarget = getLevelTarget(maxLevel).toLocaleString();
-
   return (
     <div className="mode-select">
       <div className="mode-title-wrap">
@@ -13,13 +9,11 @@ export default function ModeSelect({ onSelect }) {
       </div>
 
       <div className="mode-cards">
-        <button className="mode-card mode-card--level" onClick={() => onSelect('level', maxLevel)}>
+        <button className="mode-card mode-card--level" onClick={() => onSelect('level', 1)}>
           <Trophy size={44} strokeWidth={1.8} className="mode-card-icon mode-card-icon--level" />
           <span className="mode-card-name">Level</span>
-          <span className="mode-card-desc">
-            {maxLevel > 1 ? `Tiếp tục từ Level ${maxLevel}` : 'Bắt đầu từ Level 1'}
-          </span>
-          <span className="mode-card-hint">Mục tiêu: {nextTarget} điểm</span>
+          <span className="mode-card-desc">Vượt qua từng màn liên tiếp</span>
+          <span className="mode-card-hint">Thua thì chơi lại từ Level 1</span>
         </button>
 
         <button className="mode-card mode-card--classic" onClick={() => onSelect('classic')}>

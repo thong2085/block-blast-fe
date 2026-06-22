@@ -42,7 +42,7 @@ export default function GameOverModal({ score, bestScore, onRestart, mode }) {
         {!submitted ? (
           <form onSubmit={handleSubmit} className="leaderboard-form">
             <p className="form-label">
-              {mode === 'level' ? 'Thử lại level này!' : 'Lưu điểm lên bảng xếp hạng'}
+              {mode === 'level' ? 'Chơi lại từ Level 1!' : 'Lưu điểm lên bảng xếp hạng'}
             </p>
             <input
               type="text"
@@ -60,7 +60,7 @@ export default function GameOverModal({ score, bestScore, onRestart, mode }) {
                 </button>
               )}
               <button type="button" className="btn btn-secondary" onClick={onRestart}>
-                {mode === 'level' ? 'Thử lại' : 'Chơi lại'}
+                Chơi lại
               </button>
             </div>
           </form>

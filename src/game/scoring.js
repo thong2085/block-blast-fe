@@ -1,30 +1,27 @@
-// Block Blast scoring — matches the real game's formula.
+// Placed cells: 2 pt each
+// Line clear bonus: n*(n-1)*100, floor at 100 for n=1
+//   1 line  →  100
+//   2 lines →  200
+//   3 lines →  600
+//   4 lines → 1200
+//   5 lines → 2000
+//   6 lines → 3000
 //
-// Line clear bonus: n*(n-1)*10, floor at 10 for n=1
-//   1 line  →  10
-//   2 lines →  20
-//   3 lines →  60
-//   4 lines → 120
-//   5 lines → 200
-//   6 lines → 300
-//
-// Combo multiplier (multiplicative, applied to the clear bonus only):
-//   1st clear (no prior streak) → ×1.0
-//   2nd consecutive            → ×1.2
-//   3rd consecutive            → ×1.5
-//   4th consecutive            → ×2.0
-//   5th+ consecutive           → ×3.0
-//
-// Placed cells always earn 1 pt each regardless of combo.
+// Combo multiplier (applied to clear bonus):
+//   1st clear → ×1.0
+//   2nd       → ×1.2
+//   3rd       → ×1.5
+//   4th       → ×2.0
+//   5th+      → ×3.0
 
 const COMBO_MULT = [1.0, 1.0, 1.2, 1.5, 2.0, 3.0];
 
 function lineClearBonus(n) {
-  return Math.max(10, n * (n - 1) * 10);
+  return Math.max(100, n * (n - 1) * 100);
 }
 
 export function calculateScore(block, clearedRows, clearedCols, combo) {
-  const placedScore = block.cells.length;
+  const placedScore = block.cells.length * 2;
   const n = clearedRows.length + clearedCols.length;
 
   if (n === 0) {

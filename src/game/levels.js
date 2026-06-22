@@ -1,6 +1,6 @@
-// Target score tăng dần theo cấp số nhân
-const BASE_TARGET = 300;
-const SCALE = 1.38;
+// Target tăng nhẹ — cảm giác mỗi level cần nỗ lực tương đương
+const BASE_TARGET = 800;
+const SCALE = 1.2;
 
 export function getLevelTarget(level) {
   return Math.round(BASE_TARGET * Math.pow(SCALE, level - 1));
