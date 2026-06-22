@@ -1,8 +1,12 @@
-import { ALL_SHAPES, SHAPE_WEIGHTS, getRandomColor } from './shapes';
+import { ALL_SHAPES, SHAPE_WEIGHTS, COLORS } from './shapes';
 import { hasAnyMove } from './board';
 
-function makeBlock(shape, colors) {
-  return { ...shape, color: getRandomColor(colors) };
+function pick3Colors(palette) {
+  const src = (palette && palette.length >= 3) ? palette : COLORS;
+  const shuffled = [...src].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3).map(c =>
+    Array.isArray(c) ? `linear-gradient(135deg, ${c[0]} 0%, ${c[1]} 100%)` : c
+  );
 }
 
 function weightedRandom(shapes, weights) {
@@ -40,6 +44,10 @@ function getDifficultyWeights(score) {
     square2: 4, square3: 3,
     t_d: 6, t_u: 6, t_r: 6, t_l: 6,
     l_dr: 6, l_dl: 6, l_ur: 6, l_ul: 6,
+    plus: 5,
+    rect2x3: 4, rect3x2: 4,
+    lbig_dr: 4, lbig_dl: 4, lbig_ur: 4, lbig_ul: 4,
+    lbig_ld: 4, lbig_lu: 4, lbig_rd: 4, lbig_ru: 4,
   };
 }
 
@@ -48,9 +56,11 @@ export function generateBlocks(board, score = 0, colors) {
   const placeable = ALL_SHAPES.filter(s => hasAnyMove(board, [{ ...s, color: '#fff' }]));
   const pool = placeable.length > 0 ? placeable : ALL_SHAPES;
 
+  const [c0, c1, c2] = pick3Colors(colors);
+
   return [
-    makeBlock(weightedRandom(pool, weights), colors),
-    makeBlock(weightedRandom(ALL_SHAPES, weights), colors),
-    makeBlock(weightedRandom(ALL_SHAPES, weights), colors),
+    { ...weightedRandom(pool, weights),       color: c0 },
+    { ...weightedRandom(ALL_SHAPES, weights), color: c1 },
+    { ...weightedRandom(ALL_SHAPES, weights), color: c2 },
   ];
 }

@@ -101,6 +101,13 @@ export function useSound() {
           // Sad descending
           [320, 270, 220, 170].forEach((f, i) => tone(f, t + i * 0.18, 0.28, 0.28));
           break;
+
+        case 'powerup':
+          // Magic activation: rising zing + sparkle burst
+          tone(550, t,        0.12, 0.22, 'triangle');
+          tone(880, t + 0.06, 0.10, 0.18, 'sine');
+          burst(t + 0.03, 0.03, 0.12, 3200, 3.5);
+          break;
       }
     } catch {
       // AudioContext blocked or unavailable — silent fail

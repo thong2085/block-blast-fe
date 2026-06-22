@@ -77,6 +77,23 @@ export const ALL_SHAPES = [
   { id: 's_v', size: 4, cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
   { id: 'z_h', size: 4, cells: [[0, 0], [0, 1], [1, 1], [1, 2]] },
   { id: 'z_v', size: 4, cells: [[0, 1], [1, 0], [1, 1], [2, 0]] },
+
+  // Plus / cross shape (5 cells)
+  { id: 'plus', size: 5, cells: [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]] },
+
+  // 2×3 and 3×2 rectangles (6 cells)
+  { id: 'rect2x3', size: 6, cells: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]] },
+  { id: 'rect3x2', size: 6, cells: [[0, 0], [0, 1], [1, 0], [1, 1], [2, 0], [2, 1]] },
+
+  // Big-L shapes (5 cells, all 8 orientations)
+  { id: 'lbig_dr', size: 5, cells: [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]] },
+  { id: 'lbig_dl', size: 5, cells: [[0, 1], [1, 1], [2, 1], [3, 0], [3, 1]] },
+  { id: 'lbig_ur', size: 5, cells: [[0, 0], [0, 1], [1, 0], [2, 0], [3, 0]] },
+  { id: 'lbig_ul', size: 5, cells: [[0, 0], [0, 1], [1, 1], [2, 1], [3, 1]] },
+  { id: 'lbig_ld', size: 5, cells: [[0, 0], [1, 0], [1, 1], [1, 2], [1, 3]] },
+  { id: 'lbig_lu', size: 5, cells: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 0]] },
+  { id: 'lbig_rd', size: 5, cells: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 3]] },
+  { id: 'lbig_ru', size: 5, cells: [[0, 3], [1, 0], [1, 1], [1, 2], [1, 3]] },
 ];
 
 // Weights: khối nhỏ = trọng số cao (xuất hiện thường hơn)
@@ -90,7 +107,11 @@ export const SHAPE_WEIGHTS = {
   t_d: 4, t_u: 4, t_r: 4, t_l: 4,
   s_h: 3, s_v: 3, z_h: 3, z_v: 3,
   llong_r: 3, llong_l: 3, llong_u: 3, llong_d: 3,
+  plus: 3,
+  rect2x3: 2, rect3x2: 2,
   line5_h: 2, line5_v: 2,
+  lbig_dr: 2, lbig_dl: 2, lbig_ur: 2, lbig_ul: 2,
+  lbig_ld: 2, lbig_lu: 2, lbig_rd: 2, lbig_ru: 2,
   square3: 1,
 };
 

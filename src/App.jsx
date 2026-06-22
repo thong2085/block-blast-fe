@@ -11,6 +11,7 @@ import Leaderboard from './components/Leaderboard';
 import BlockPreview from './components/BlockPreview';
 import MusicPanel from './components/MusicPanel';
 import ParticlesCanvas from './components/ParticlesCanvas';
+import PowerUpBar from './components/PowerUpBar';
 import ComboEffect from './components/ComboEffect';
 import Confetti from './components/Confetti';
 import { useGame } from './hooks/useGame';
@@ -43,7 +44,9 @@ export default function App() {
     previewPos, setPreviewPos,
     draggingIndex, setDraggingIndex,
     dragRef, placeableBlocks,
+    powerups, activePowerup,
     tryPlaceBlock, pause, resume, restart, restore,
+    selectPowerup, firePowerup,
   } = useGame(theme.colors);
 
   const { play, muted, toggleMute } = useSound();
@@ -62,11 +65,12 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape' || isGameOver || levelComplete || !mode) return;
+      if (activePowerup) { selectPowerup(activePowerup); return; }
       isPaused ? resume() : pause();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isPaused, isGameOver, levelComplete, mode, pause, resume]);
+  }, [isPaused, isGameOver, levelComplete, mode, activePowerup, selectPowerup, pause, resume]);
 
   useEffect(() => {
     if (isGameOver) play('gameover');
@@ -87,7 +91,7 @@ export default function App() {
       return;
     }
     try {
-      localStorage.setItem('bb_session', JSON.stringify({ mode, level, board, blocks, score, combo }));
+      localStorage.setItem('bb_session', JSON.stringify({ mode, level, board, blocks, score, combo, powerups }));
     } catch {}
   }, [board, blocks, score, combo, mode, level, isGameOver, levelComplete]);
 
@@ -113,6 +117,7 @@ export default function App() {
 
   const handleBlockPointerDown = useCallback((e, index) => {
     if (isPaused || isGameOver || levelComplete) return;
+    if (activePowerup) { selectPowerup(activePowerup); return; }
     e.preventDefault();
     if (e.target.hasPointerCapture?.(e.pointerId)) {
       e.target.releasePointerCapture(e.pointerId);
@@ -121,7 +126,20 @@ export default function App() {
     setDraggingIndex(index);
     updateGhost(e.clientX, e.clientY);
     document.body.style.cursor = 'grabbing';
-  }, [isPaused, isGameOver, levelComplete, dragRef, setDraggingIndex, updateGhost]);
+  }, [isPaused, isGameOver, levelComplete, activePowerup, selectPowerup, dragRef, setDraggingIndex, updateGhost]);
+
+  const handleSelectPowerup = useCallback((key) => {
+    selectPowerup(key);
+    play('powerup');
+  }, [selectPowerup, play]);
+
+  const handlePowerupTarget = useCallback((row, col) => {
+    const cleared = firePowerup(row, col);
+    if (cleared) {
+      play('clear');
+      vibrate([20, 10, 50]);
+    }
+  }, [firePowerup, play]);
 
   // Convert pointer position → board (row, col) using ghost visual top-left corner.
   // Ghost CSS: translate(-50%, -130%), so visual top-left = (clientX - ghostW/2, clientY - ghostH*1.3)
@@ -253,6 +271,10 @@ export default function App() {
     restart();
   }, [restart]);
 
+  const isNearGameOver = !isGameOver && !levelComplete &&
+    blocks.some(Boolean) &&
+    blocks.every((b, i) => !b || !placeableBlocks[i]);
+
   const draggingBlock = draggingIndex !== null ? blocks[draggingIndex] : null;
 
   const themeVars = {
@@ -342,6 +364,14 @@ export default function App() {
               placedCells={placedCells}
               onBoardPointerLeave={handleBoardPointerLeave}
               boardRef={boardRef}
+              activePowerup={activePowerup}
+              onPowerupTarget={handlePowerupTarget}
+              isNearGameOver={isNearGameOver}
+            />
+            <PowerUpBar
+              powerups={powerups}
+              activePowerup={activePowerup}
+              onSelect={handleSelectPowerup}
             />
             <BlockTray
               blocks={blocks}
