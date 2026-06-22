@@ -13,6 +13,7 @@ import ParticlesCanvas from './components/ParticlesCanvas';
 import PowerUpBar from './components/PowerUpBar';
 import ComboEffect from './components/ComboEffect';
 import Confetti from './components/Confetti';
+import FloatingScore from './components/FloatingScore';
 import { useGame } from './hooks/useGame';
 import { useSound } from './hooks/useSound';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
@@ -36,7 +37,7 @@ export default function App() {
   const theme = getTheme(mode === 'level' ? level : 1);
 
   const {
-    board, blocks, score, bestScore, combo,
+    board, blocks, score, bestScore, combo, bestCombo,
     isGameOver, isPaused,
     placedCells, flashCells, clearedCells,
     lastGained, newBlocksKey,
@@ -60,6 +61,8 @@ export default function App() {
       setTimeout(() => {
         setLevel(l => l + 1);
         setLevelComplete(false);
+        setComboEvent(null);
+        setClearEvent(null);
         restart();
       }, 1500);
     }
@@ -179,10 +182,13 @@ export default function App() {
       setDraggingIndex(null);
       if (!result) return;
       play('place');
-      vibrate(12);
+      vibrate(10);
       if (result.cleared > 0) {
-        setTimeout(() => { play('clear'); vibrate(result.boardClear ? 80 : 35); }, 80);
-        if (result.nextCombo > 1) setTimeout(() => { play('combo', result.nextCombo); vibrate([15, 8, 25]); }, 300);
+        setTimeout(() => {
+          play('clear');
+          vibrate(result.boardClear ? [60, 20, 100, 20, 150] : [30, 15, 30]);
+        }, 80);
+        if (result.nextCombo > 1) setTimeout(() => { play('combo', result.nextCombo); vibrate([20, 10, 35, 10, 55]); }, 300);
       }
     };
 
@@ -256,29 +262,38 @@ export default function App() {
 
   const handleBoardPointerLeave = useCallback(() => setPreviewPos(null), [setPreviewPos]);
 
+  const resetTransientUI = useCallback(() => {
+    setComboEvent(null);
+    setClearEvent(null);
+  }, []);
+
   const handleSelectMode = useCallback((selectedMode, startLevel = 1) => {
     setMode(selectedMode);
     setLevel(startLevel);
     setLevelComplete(false);
+    resetTransientUI();
     restart();
-  }, [restart]);
+  }, [restart, resetTransientUI]);
 
   const handleRetryLevel = useCallback(() => {
     setLevelComplete(false);
+    resetTransientUI();
     restart();
-  }, [restart]);
+  }, [restart, resetTransientUI]);
 
   const handleGameOverRestart = useCallback(() => {
     if (mode === 'level') setLevel(1);
     setLevelComplete(false);
+    resetTransientUI();
     restart();
-  }, [mode, restart]);
+  }, [mode, restart, resetTransientUI]);
 
   const handleBackToMenu = useCallback(() => {
     setMode(null);
     setLevelComplete(false);
+    resetTransientUI();
     restart();
-  }, [restart]);
+  }, [restart, resetTransientUI]);
 
   const isNearGameOver = !isGameOver && !levelComplete &&
     blocks.some(Boolean) &&
@@ -402,8 +417,17 @@ export default function App() {
       {isPaused && !isGameOver && !levelComplete && (
         <PauseModal onResume={resume} onRestart={handleRetryLevel} />
       )}
+      {lastGained && lastGained.gained > 0 && (
+        <FloatingScore
+          key={lastGained.key}
+          gained={lastGained.gained}
+          combo={lastGained.combo}
+          boardClear={lastGained.boardClear}
+          boardRef={boardRef}
+        />
+      )}
       {isGameOver && !levelComplete && (
-        <GameOverModal score={score} bestScore={bestScore} onRestart={handleGameOverRestart} mode={mode} />
+        <GameOverModal score={score} bestScore={bestScore} bestCombo={bestCombo} onRestart={handleGameOverRestart} mode={mode} />
       )}
       {showMusic && (
         <MusicPanel

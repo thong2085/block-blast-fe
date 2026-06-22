@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-export default function GameOverModal({ score, bestScore, onRestart, mode }) {
+export default function GameOverModal({ score, bestScore, bestCombo, onRestart, mode }) {
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,6 +37,12 @@ export default function GameOverModal({ score, bestScore, onRestart, mode }) {
             <span>Điểm cao nhất</span>
             <strong>{bestScore.toLocaleString()}</strong>
           </div>
+          {bestCombo > 1 && (
+            <div className="modal-score-item modal-score-item--combo">
+              <span>Combo cao nhất</span>
+              <strong>×{bestCombo}</strong>
+            </div>
+          )}
         </div>
 
         {!submitted ? (

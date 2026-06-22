@@ -18,6 +18,7 @@ export function useGame(colors) {
   const [score, setScore]         = useState(0);
   const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem('bb_best') ?? 0));
   const [combo, setCombo]         = useState(0);
+  const [bestCombo, setBestCombo] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPaused, setIsPaused]     = useState(false);
   const [isNewBest, setIsNewBest]   = useState(false);
@@ -109,8 +110,11 @@ export function useGame(colors) {
 
     // --- Score popup ---
     clearTimeout(lastGainedTimerRef.current);
-    setLastGained({ gained: gained + boardClearBonus, combo: nextCombo, boardClear: boardClearBonus > 0 });
+    setLastGained({ key: Date.now(), gained: gained + boardClearBonus, combo: nextCombo, boardClear: boardClearBonus > 0 });
     lastGainedTimerRef.current = setTimeout(() => setLastGained(null), 1200);
+
+    // --- Best combo this session ---
+    if (hasClear && nextCombo > 1) setBestCombo(prev => Math.max(prev, nextCombo));
 
     // --- New best check ---
     if (nextScore > initialBestRef.current) setIsNewBest(true);
@@ -258,6 +262,7 @@ export function useGame(colors) {
     setBlocks(generateBlocks(emptyBoard, 0, colorsRef.current));
     setScore(0);
     setCombo(0);
+    setBestCombo(0);
     setPowerups(POWERUP_INIT);
     setActivePowerup(null);
     setIsGameOver(false);
@@ -275,7 +280,7 @@ export function useGame(colors) {
   }, [clearAllTimers, dragRef]);
 
   return {
-    board, blocks, score, bestScore, combo,
+    board, blocks, score, bestScore, combo, bestCombo,
     isGameOver, isPaused, isNewBest,
     placedCells, flashCells, clearedCells,
     lastGained, newBlocksKey,
