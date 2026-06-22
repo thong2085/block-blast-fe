@@ -328,7 +328,7 @@ button { font-family: inherit; }
   box-shadow: inset 0 0 0 1px rgba(248,81,73,0.5);
 }
 
-.cell--placed  { animation: cellPop 0.22s cubic-bezier(.34,1.56,.64,1) both; }
+.cell--placed  { animation: cellPop 0.19s ease both; }
 
 .cell--flashing {
   background: #fff !important;
@@ -341,9 +341,10 @@ button { font-family: inherit; }
 }
 
 @keyframes cellPop {
-  0%   { transform: scale(0.1); }
-  70%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0%   { transform: scale(1.35) translateY(-4px); filter: brightness(1.35); }
+  48%  { transform: scale(0.88) translateY(2px);  filter: brightness(0.96); }
+  74%  { transform: scale(1.05) translateY(-1px); }
+  100% { transform: scale(1)    translateY(0);    filter: brightness(1); }
 }
 
 @keyframes cellClear {

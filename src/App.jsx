@@ -84,54 +84,98 @@ export default function App() {
     updateGhost(e.clientX, e.clientY);
   }, [isPaused, isGameOver, levelComplete, dragRef, setDraggingIndex, updateGhost]);
 
-  // For touch: ghost visual top = fingerY - ghostHeight * 1.3 (CSS transform)
-  // Board placement must use the same adjusted Y so preview matches what user sees
-  const getTouchAdjustedCoords = useCallback((clientX, clientY) => {
+  // Convert pointer position → board (row, col) using ghost visual top-left corner.
+  // Ghost CSS: translate(-50%, -130%), so visual top-left = (clientX - ghostW/2, clientY - ghostH*1.3)
+  const getAdjustedCoords = useCallback((clientX, clientY) => {
     if (!boardRef.current) return null;
-    const ghostH = ghostRef.current?.getBoundingClientRect().height ?? 0;
+    const ghostEl  = ghostRef.current;
+    const ghostW   = ghostEl?.getBoundingClientRect().width  ?? 0;
+    const ghostH   = ghostEl?.getBoundingClientRect().height ?? 0;
+    const adjustedX = clientX - ghostW / 2;
     const adjustedY = clientY - ghostH * 1.3;
     const rect = boardRef.current.getBoundingClientRect();
-    const col = Math.floor((clientX - rect.left) / (rect.width  / BOARD_SIZE));
-    const row = Math.floor((adjustedY  - rect.top)  / (rect.height / BOARD_SIZE));
+    const col  = Math.floor((adjustedX - rect.left) / (rect.width  / BOARD_SIZE));
+    const row  = Math.floor((adjustedY - rect.top)  / (rect.height / BOARD_SIZE));
     return { row, col };
   }, []);
+
+  // Ghost snaps to board cell, then cells pop in
+  const snapAndPlace = useCallback((idx, row, col) => {
+    setPreviewPos(null);
+    dragRef.current.active = false;
+
+    const ghost = ghostRef.current;
+    const board = boardRef.current;
+
+    const doPlace = () => {
+      const result = tryPlaceBlock(idx, row, col);
+      setDraggingIndex(null);
+      if (!result) return;
+      play('place');
+      if (result.cleared > 0) {
+        setTimeout(() => play('clear'), 80);
+        if (result.nextCombo > 1) setTimeout(() => play('combo', result.nextCombo), 300);
+      }
+    };
+
+    if (!ghost || !board) { doPlace(); return; }
+
+    const ghostW = ghost.offsetWidth;
+    const ghostH = ghost.offsetHeight;
+    const boardRect = board.getBoundingClientRect();
+    const cellSize  = boardRect.width / BOARD_SIZE;
+
+    // CSS transform: translate(-50%, -130%)
+    // visual.left = style.left - ghostW*0.5  →  targetLeft = cell_x + ghostW*0.5
+    // visual.top  = style.top  - ghostH*1.3  →  targetTop  = cell_y + ghostH*1.3
+    const targetLeft = boardRect.left + col * cellSize + ghostW * 0.5;
+    const targetTop  = boardRect.top  + row * cellSize + ghostH * 1.3;
+
+    ghost.style.transition = [
+      'left 0.1s cubic-bezier(.3,1.5,.4,1)',
+      'top  0.1s cubic-bezier(.3,1.5,.4,1)',
+      'transform 0.1s cubic-bezier(.3,1.5,.4,1)',
+      'opacity 0.07s ease 0.04s',
+    ].join(',');
+    void ghost.getBoundingClientRect(); // force reflow so transition fires
+    ghost.style.left      = `${targetLeft}px`;
+    ghost.style.top       = `${targetTop}px`;
+    ghost.style.transform = 'translate(-50%,-130%) scale(0.8)';
+    ghost.style.opacity   = '0';
+
+    setTimeout(() => {
+      ghost.style.transition = '';
+      ghost.style.transform  = '';
+      ghost.style.opacity    = '';
+      doPlace();
+    }, 105);
+  }, [dragRef, ghostRef, boardRef, tryPlaceBlock, play, setDraggingIndex, setPreviewPos]);
 
   useEffect(() => {
     const onMove = (e) => {
       if (!dragRef.current.active) return;
       updateGhost(e.clientX, e.clientY);
-      if (e.pointerType === 'touch') {
-        const coords = getTouchAdjustedCoords(e.clientX, e.clientY);
-        if (coords && coords.row >= 0 && coords.row < BOARD_SIZE && coords.col >= 0 && coords.col < BOARD_SIZE) {
-          setPreviewPos(coords);
-        } else {
-          setPreviewPos(null);
-        }
+      const coords = getAdjustedCoords(e.clientX, e.clientY);
+      if (coords && coords.row >= 0 && coords.row < BOARD_SIZE && coords.col >= 0 && coords.col < BOARD_SIZE) {
+        setPreviewPos(coords);
+      } else {
+        setPreviewPos(null);
       }
     };
     const onUp = (e) => {
       if (!dragRef.current.active) return;
-      if (e.pointerType === 'touch') {
-        const coords = getTouchAdjustedCoords(e.clientX, e.clientY);
-        const idx = dragRef.current.blockIndex;
+      const idx    = dragRef.current.blockIndex;
+      const coords = getAdjustedCoords(e.clientX, e.clientY);
+      const inBounds = coords &&
+        coords.row >= 0 && coords.row < BOARD_SIZE &&
+        coords.col >= 0 && coords.col < BOARD_SIZE;
+      if (inBounds) {
+        snapAndPlace(idx, coords.row, coords.col);
+      } else {
         dragRef.current.active = false;
         setDraggingIndex(null);
         setPreviewPos(null);
-        if (coords) {
-          const result = tryPlaceBlock(idx, coords.row, coords.col);
-          if (result) {
-            play('place');
-            if (result.cleared > 0) {
-              setTimeout(() => play('clear'), 80);
-              if (result.nextCombo > 1) setTimeout(() => play('combo', result.nextCombo), 300);
-            }
-          }
-        }
-        return;
       }
-      dragRef.current.active = false;
-      setDraggingIndex(null);
-      setPreviewPos(null);
     };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
@@ -139,27 +183,7 @@ export default function App() {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
     };
-  }, [dragRef, setDraggingIndex, setPreviewPos, updateGhost, getTouchAdjustedCoords, tryPlaceBlock, play]);
-
-  const handleBoardPointerMove = useCallback((row, col) => {
-    if (!dragRef.current.active) return;
-    setPreviewPos({ row, col });
-  }, [dragRef, setPreviewPos]);
-
-  const handleBoardPointerUp = useCallback((row, col) => {
-    if (!dragRef.current.active) return;
-    const idx = dragRef.current.blockIndex;
-    const result = tryPlaceBlock(idx, row, col);
-    dragRef.current.active = false;
-    setDraggingIndex(null);
-    setPreviewPos(null);
-    if (!result) return;
-    play('place');
-    if (result.cleared > 0) {
-      setTimeout(() => play('clear'), 80);
-      if (result.nextCombo > 1) setTimeout(() => play('combo', result.nextCombo), 300);
-    }
-  }, [dragRef, tryPlaceBlock, play, setDraggingIndex, setPreviewPos]);
+  }, [dragRef, setDraggingIndex, setPreviewPos, updateGhost, getAdjustedCoords, snapAndPlace]);
 
   const handleBoardPointerLeave = useCallback(() => setPreviewPos(null), [setPreviewPos]);
 
@@ -274,8 +298,6 @@ export default function App() {
               clearedCells={clearedCells}
               flashCells={flashCells}
               placedCells={placedCells}
-              onBoardPointerMove={handleBoardPointerMove}
-              onBoardPointerUp={handleBoardPointerUp}
               onBoardPointerLeave={handleBoardPointerLeave}
               boardRef={boardRef}
             />
