@@ -30,23 +30,59 @@ h1,h2,h3,p,span { margin: 0; }
 button { font-family: inherit; }
 #root { width: 100%; }
 
-/* ===== Pink Sky Background ===== */
-.app {
-  min-height: 100dvh;
+/* ===== Per-theme backgrounds (keyed on data-block) ===== */
+/* jelly = Sakura (default, also used when no theme set) */
+[data-block="jelly"] {
   background:
     radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 28% at 72% 18%, rgba(255,240,250,0.5)  0%, transparent 50%),
-    radial-gradient(ellipse 60% 25% at 55% 42%, rgba(255,200,230,0.35) 0%, transparent 55%),
-    linear-gradient(180deg,
-      #bcd8f8 0%,
-      #d8b0e8 14%,
-      #f0a0cc 28%,
-      #ffacc4 42%,
-      #ffb8b0 58%,
-      #ffc8b4 74%,
-      #ffd4c0 88%,
-      #ffe0d0 100%
-    );
+    linear-gradient(180deg, #bcd8f8 0%, #d8b0e8 14%, #f0a0cc 28%, #ffacc4 42%, #ffb8b0 58%, #ffd4c0 88%, #ffe0d0 100%);
+}
+/* gem = Rose Gold */
+[data-block="gem"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #f5d86c 0%, #f0b850 14%, #e89848 28%, #f0a070 42%, #f8b890 58%, #fdd0b0 88%, #fff0e0 100%);
+}
+/* candy = Candy */
+[data-block="candy"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #c084fc 0%, #d946ef 14%, #e879f9 28%, #f0abfc 42%, #f5c8fe 58%, #fae8ff 88%, #fdf4ff 100%);
+}
+/* soft = Cotton Candy */
+[data-block="soft"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #38bdf8 0%, #22d3ee 14%, #67e8f9 28%, #a5f3fc 42%, #bae6fd 58%, #e0f2fe 88%, #f0f9ff 100%);
+}
+/* classic = Peach */
+[data-block="classic"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #fb923c 0%, #fdba74 14%, #fed7aa 28%, #ffedd5 42%, #fff7ed 58%, #fef9f0 88%, #fffcf8 100%);
+}
+/* neon = Lavender */
+[data-block="neon"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #a78bfa 0%, #c084fc 14%, #d8b4fe 28%, #e9d5ff 42%, #f3e8ff 58%, #f9f0ff 88%, #fdf8ff 100%);
+}
+/* pixel = Strawberry */
+[data-block="pixel"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #f87171 0%, #fca5a5 14%, #fecaca 28%, #fee2e2 42%, #fff1f2 58%, #fff5f5 88%, #fffafa 100%);
+}
+/* glass = Dreamy */
+[data-block="glass"] {
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 28%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    linear-gradient(160deg, #c7d2fe 0%, #e9d5ff 20%, #fbcfe8 40%, #fef3c7 60%, #d1fae5 80%, #bfdbfe 100%);
+}
+
+/* ===== App shell ===== */
+.app {
+  min-height: 100dvh;
   color: var(--text);
   display: flex;
   flex-direction: column;
@@ -268,10 +304,10 @@ button { font-family: inherit; }
 }
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #f43f5e, #f472b6);
+  background: linear-gradient(90deg, var(--theme-accent, #f43f5e), color-mix(in srgb, var(--theme-accent, #f472b6) 70%, white));
   border-radius: 999px;
   transition: width 0.45s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 0 8px rgba(244,63,94,0.5);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--theme-accent, #f43f5e) 60%, transparent);
 }
 
 /* ===== Board ===== */

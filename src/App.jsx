@@ -289,7 +289,7 @@ export default function App() {
 
   if (!mode) {
     return (
-      <div className="app">
+      <div className="app" data-block="jelly">
         <ModeSelect onSelect={handleSelectMode} />
       </div>
     );

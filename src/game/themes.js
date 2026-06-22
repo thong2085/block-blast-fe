@@ -4,6 +4,7 @@ export const THEMES = [
   {
     name: 'Sakura',
     blockStyle: 'jelly',
+    accent: '#f472b6',
     colors: [
       ['#ffe4e6', '#fb7185'],  // rose-100 → rose-400
       ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
@@ -22,6 +23,7 @@ export const THEMES = [
   {
     name: 'Rose Gold',
     blockStyle: 'gem',
+    accent: '#f59e0b',
     colors: [
       ['#fef9c3', '#f59e0b'],  // yellow-100 → amber-500
       ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
@@ -40,6 +42,7 @@ export const THEMES = [
   {
     name: 'Candy',
     blockStyle: 'candy',
+    accent: '#d946ef',
     colors: [
       ['#fdf4ff', '#e879f9'],  // fuchsia-50 → fuchsia-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
@@ -58,6 +61,7 @@ export const THEMES = [
   {
     name: 'Cotton Candy',
     blockStyle: 'soft',
+    accent: '#22d3ee',
     colors: [
       ['#dbeafe', '#60a5fa'],  // blue-100 → blue-400
       ['#cffafe', '#22d3ee'],  // cyan-100 → cyan-400
@@ -76,6 +80,7 @@ export const THEMES = [
   {
     name: 'Peach',
     blockStyle: 'classic',
+    accent: '#f97316',
     colors: [
       ['#ffedd5', '#fb923c'],  // orange-100 → orange-400
       ['#fef3c7', '#fbbf24'],  // amber-100 → amber-400
@@ -94,6 +99,7 @@ export const THEMES = [
   {
     name: 'Lavender',
     blockStyle: 'neon',
+    accent: '#a855f7',
     colors: [
       ['#ede9fe', '#a78bfa'],  // violet-100 → violet-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
@@ -112,6 +118,7 @@ export const THEMES = [
   {
     name: 'Strawberry',
     blockStyle: 'pixel',
+    accent: '#ef4444',
     colors: [
       ['#ffe4e6', '#f87171'],  // rose-100 → red-400
       ['#fee2e2', '#fca5a5'],  // red-100 → red-300
@@ -130,6 +137,7 @@ export const THEMES = [
   {
     name: 'Dreamy',
     blockStyle: 'glass',
+    accent: '#c084fc',
     colors: [
       ['#fce7f3', '#f472b6'],  // pink-100 → pink-400
       ['#f3e8ff', '#c084fc'],  // purple-100 → purple-400
