@@ -6,12 +6,15 @@ import {
 } from '../game/board';
 import { calculateScore } from '../game/scoring';
 import { generateBlocks } from '../game/generator';
+import { mulberry32, getTodaySeed } from '../game/daily';
 
-const POWERUP_INIT = { bomb: 2, line: 1, colorBomb: 1 };
+const POWERUP_INIT = { bomb: 2, line: 1, colorBomb: 1, shuffle: 1 };
 
-export function useGame(colors) {
+export function useGame(colors, mode) {
   const colorsRef = useRef(colors);
   useEffect(() => { colorsRef.current = colors; }, [colors]);
+
+  const dailyRngRef = useRef(null);
 
   const [board, setBoard]         = useState(createEmptyBoard);
   const [blocks, setBlocks]       = useState(() => generateBlocks(createEmptyBoard(), 0, colors));
@@ -19,12 +22,13 @@ export function useGame(colors) {
   const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem('bb_best') ?? 0));
   const [combo, setCombo]         = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
+  const [totalLinesCleared, setTotalLinesCleared] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPaused, setIsPaused]     = useState(false);
   const [isNewBest, setIsNewBest]   = useState(false);
 
   // Power-ups
-  const [powerups, setPowerups]         = useState(POWERUP_INIT);
+  const [powerups, setPowerups]           = useState(POWERUP_INIT);
   const [activePowerup, setActivePowerup] = useState(null);
   const initialBestRef = useRef(Number(localStorage.getItem('bb_best') ?? 0));
 
@@ -35,13 +39,13 @@ export function useGame(colors) {
   const [lastGained, setLastGained]     = useState(null);
   const [newBlocksKey, setNewBlocksKey] = useState(0);
 
-  // Drag state (ref so pointer handlers don't need re-registration)
+  // Drag state
   const dragRef = useRef({ active: false, blockIndex: null });
   const [previewPos, setPreviewPos]       = useState(null);
   const [draggingIndex, setDraggingIndex] = useState(null);
 
-  // Timer refs — cleared on restart to prevent stale callbacks
-  const gameOverTimerRef  = useRef(null);
+  // Timer refs
+  const gameOverTimerRef   = useRef(null);
   const lastGainedTimerRef = useRef(null);
   const animTimersRef      = useRef([]);
 
@@ -58,13 +62,11 @@ export function useGame(colors) {
     return id;
   }, []);
 
-  // Per-block placeable check — recomputed only when board or blocks change
   const placeableBlocks = useMemo(
     () => blocks.map(b => (b ? isBlockPlaceable(board, b) : false)),
     [board, blocks],
   );
 
-  // Returns { cleared, nextCombo } on success, null if placement invalid
   const tryPlaceBlock = useCallback((blockIndex, row, col) => {
     const block = blocks[blockIndex];
     if (!block) return null;
@@ -83,20 +85,21 @@ export function useGame(colors) {
 
     const finalBoard = hasClear ? clearLines(newBoard, rows, cols) : newBoard;
 
-    // Board clear bonus: +3600 if the entire board is empty after clearing
     const boardClearBonus = hasClear && finalBoard.every(r => r.every(c => c === null)) ? 3600 : 0;
 
     const newBlocksList = blocks.map((b, i) => (i === blockIndex ? null : b));
     const allPlaced = newBlocksList.every(b => b === null);
     const nextScore  = score + gained + boardClearBonus;
-    const nextBlocks = allPlaced ? generateBlocks(finalBoard, nextScore, colorsRef.current) : newBlocksList;
-    const newBest    = Math.max(bestScore, nextScore);
+    const nextBlocks = allPlaced
+      ? generateBlocks(finalBoard, nextScore, colorsRef.current, dailyRngRef.current)
+      : newBlocksList;
+    const newBest = Math.max(bestScore, nextScore);
 
-    // --- Placement pop animation ---
+    // Placement pop animation
     setPlacedCells(placed);
     scheduleAnim(() => setPlacedCells(new Set()), 300);
 
-    // --- Flash → clear animation sequence ---
+    // Flash → clear animation
     if (hasClear) {
       scheduleAnim(() => {
         setFlashCells(cleared);
@@ -106,20 +109,21 @@ export function useGame(colors) {
           scheduleAnim(() => setClearedCells(new Set()), 380);
         }, 160);
       }, 80);
+      setTotalLinesCleared(prev => prev + rows.length + cols.length);
     }
 
-    // --- Score popup ---
+    // Score popup
     clearTimeout(lastGainedTimerRef.current);
     setLastGained({ key: Date.now(), gained: gained + boardClearBonus, combo: nextCombo, boardClear: boardClearBonus > 0 });
     lastGainedTimerRef.current = setTimeout(() => setLastGained(null), 1200);
 
-    // --- Best combo this session ---
+    // Best combo
     if (hasClear && nextCombo > 1) setBestCombo(prev => Math.max(prev, nextCombo));
 
-    // --- New best check ---
+    // New best check
     if (nextScore > initialBestRef.current) setIsNewBest(true);
 
-    // --- Earn power-ups on score milestones ---
+    // Earn power-ups on score milestones
     const t5000  = Math.floor(nextScore / 5000)  > Math.floor(score / 5000);
     const t10000 = Math.floor(nextScore / 10000) > Math.floor(score / 10000);
     const t20000 = Math.floor(nextScore / 20000) > Math.floor(score / 20000);
@@ -128,10 +132,11 @@ export function useGame(colors) {
         bomb:      t5000  ? Math.min(p.bomb + 1, 5)      : p.bomb,
         line:      t10000 ? Math.min(p.line + 1, 3)      : p.line,
         colorBomb: t20000 ? Math.min(p.colorBomb + 1, 2) : p.colorBomb,
+        shuffle:   p.shuffle,
       }));
     }
 
-    // --- Commit state ---
+    // Commit state
     setBoard(finalBoard);
     setBlocks(nextBlocks);
     setScore(nextScore);
@@ -140,7 +145,7 @@ export function useGame(colors) {
     localStorage.setItem('bb_best', newBest);
     if (allPlaced) setNewBlocksKey(k => k + 1);
 
-    // --- Game over check ---
+    // Game over check
     clearTimeout(gameOverTimerRef.current);
     if (!hasAnyMove(finalBoard, nextBlocks.filter(Boolean))) {
       gameOverTimerRef.current = setTimeout(() => setIsGameOver(true), 600);
@@ -148,6 +153,13 @@ export function useGame(colors) {
 
     return { cleared: rows.length + cols.length, nextCombo, boardClear: boardClearBonus > 0 };
   }, [board, blocks, score, bestScore, combo, scheduleAnim]);
+
+  const shuffleBlocks = useCallback(() => {
+    if ((powerups.shuffle ?? 0) <= 0) return;
+    setPowerups(p => ({ ...p, shuffle: p.shuffle - 1 }));
+    setBlocks(generateBlocks(board, score, colorsRef.current, dailyRngRef.current));
+    setNewBlocksKey(k => k + 1);
+  }, [powerups, board, score]);
 
   const selectPowerup = useCallback((key) => {
     setActivePowerup(prev => (prev === key) ? null : key);
@@ -200,7 +212,6 @@ export function useGame(colors) {
 
     if (cleared.size === 0) return false;
 
-    // Bonus line-clears triggered by the blast
     const { rows, cols } = findCompletedLines(newBoard);
     if (rows.length > 0 || cols.length > 0) {
       rows.forEach(r => { for (let c = 0; c < BOARD_SIZE; c++) cleared.add(`${r},${c}`); });
@@ -224,7 +235,6 @@ export function useGame(colors) {
     return true;
   }, [activePowerup, board, blocks, powerups, scheduleAnim]);
 
-  // Pause cancels any in-flight drag so the block can't be placed after resume
   const pause = useCallback(() => {
     dragRef.current.active = false;
     setIsPaused(true);
@@ -234,7 +244,6 @@ export function useGame(colors) {
 
   const resume = useCallback(() => setIsPaused(false), []);
 
-  // Restore from a saved snapshot (used by App.jsx on page-load)
   const restore = useCallback(({ board: b, blocks: bl, score: s, combo: c, powerups: p }) => {
     clearAllTimers();
     dragRef.current = { active: false, blockIndex: null };
@@ -253,16 +262,23 @@ export function useGame(colors) {
     setLastGained(null);
     setPreviewPos(null);
     setDraggingIndex(null);
+    setTotalLinesCleared(0);
   }, [clearAllTimers, dragRef]);
 
-  const restart = useCallback(() => {
+  const restart = useCallback((newMode) => {
     clearAllTimers();
+    if (newMode === 'daily') {
+      dailyRngRef.current = mulberry32(getTodaySeed());
+    } else {
+      dailyRngRef.current = null;
+    }
     const emptyBoard = createEmptyBoard();
     setBoard(emptyBoard);
-    setBlocks(generateBlocks(emptyBoard, 0, colorsRef.current));
+    setBlocks(generateBlocks(emptyBoard, 0, colorsRef.current, dailyRngRef.current));
     setScore(0);
     setCombo(0);
     setBestCombo(0);
+    setTotalLinesCleared(0);
     setPowerups(POWERUP_INIT);
     setActivePowerup(null);
     setIsGameOver(false);
@@ -280,7 +296,7 @@ export function useGame(colors) {
   }, [clearAllTimers, dragRef]);
 
   return {
-    board, blocks, score, bestScore, combo, bestCombo,
+    board, blocks, score, bestScore, combo, bestCombo, totalLinesCleared,
     isGameOver, isPaused, isNewBest,
     placedCells, flashCells, clearedCells,
     lastGained, newBlocksKey,
@@ -288,7 +304,7 @@ export function useGame(colors) {
     draggingIndex, setDraggingIndex,
     dragRef, placeableBlocks,
     powerups, activePowerup,
-    tryPlaceBlock, pause, resume, restart, restore,
+    tryPlaceBlock, shuffleBlocks, pause, resume, restart, restore,
     selectPowerup, firePowerup,
   };
 }

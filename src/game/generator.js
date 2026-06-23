@@ -1,17 +1,17 @@
 import { ALL_SHAPES, SHAPE_WEIGHTS, COLORS } from './shapes';
 import { hasAnyMove } from './board';
 
-function pick3Colors(palette) {
+function pick3Colors(palette, rng) {
   const src = (palette && palette.length >= 3) ? palette : COLORS;
-  const shuffled = [...src].sort(() => Math.random() - 0.5);
+  const shuffled = [...src].sort(() => rng() - 0.5);
   return shuffled.slice(0, 3).map(c =>
     Array.isArray(c) ? `linear-gradient(135deg, ${c[0]} 0%, ${c[1]} 100%)` : c
   );
 }
 
-function weightedRandom(shapes, weights) {
+function weightedRandom(shapes, weights, rng) {
   const total = shapes.reduce((sum, s) => sum + (weights[s.id] ?? 1), 0);
-  let rand = Math.random() * total;
+  let rand = rng() * total;
   for (const s of shapes) {
     rand -= weights[s.id] ?? 1;
     if (rand <= 0) return s;
@@ -20,11 +20,9 @@ function weightedRandom(shapes, weights) {
 }
 
 function getDifficultyWeights(score) {
-  // Ngưỡng cao hơn để chơi thoải mái nhiều level đầu
   if (score < 2000) return SHAPE_WEIGHTS;
 
   if (score < 5000) {
-    // Tăng nhẹ block trung: line4, T, L-long — không đột ngột
     return {
       ...SHAPE_WEIGHTS,
       single: 5,
@@ -34,7 +32,6 @@ function getDifficultyWeights(score) {
     };
   }
 
-  // Hard: chỉ dùng cho người chơi điểm rất cao
   return {
     ...SHAPE_WEIGHTS,
     single: 2,
@@ -50,19 +47,18 @@ function getDifficultyWeights(score) {
   };
 }
 
-export function generateBlocks(board, score = 0, colors) {
+export function generateBlocks(board, score = 0, colors, rng) {
+  const rand = rng ?? Math.random.bind(Math);
   const weights = getDifficultyWeights(score);
 
-  // Only generate shapes that can actually be placed on the current board.
-  // This prevents instant-game-over from receiving unplaceable large blocks.
   const placeable = ALL_SHAPES.filter(s => hasAnyMove(board, [{ ...s, color: '#fff' }]));
   const pool = placeable.length > 0 ? placeable : ALL_SHAPES;
 
-  const [c0, c1, c2] = pick3Colors(colors);
+  const [c0, c1, c2] = pick3Colors(colors, rand);
 
   return [
-    { ...weightedRandom(pool, weights), color: c0 },
-    { ...weightedRandom(pool, weights), color: c1 },
-    { ...weightedRandom(pool, weights), color: c2 },
+    { ...weightedRandom(pool, weights, rand), color: c0 },
+    { ...weightedRandom(pool, weights, rand), color: c1 },
+    { ...weightedRandom(pool, weights, rand), color: c2 },
   ];
 }

@@ -2,6 +2,7 @@ const POWERUPS = [
   { key: 'bomb',      icon: '💣', label: 'BOM',   desc: 'Nổ vùng 3×3' },
   { key: 'line',      icon: '⚡', label: 'SÉT',   desc: 'Xóa hàng + cột' },
   { key: 'colorBomb', icon: '🎨', label: 'MÀU',   desc: 'Xóa màu chính' },
+  { key: 'shuffle',   icon: '🔀', label: 'XÁO',   desc: 'Đổi 3 khối mới' },
 ];
 
 export default function PowerUpBar({ powerups, activePowerup, onSelect }) {

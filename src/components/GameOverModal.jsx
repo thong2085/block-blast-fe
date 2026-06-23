@@ -3,11 +3,14 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-export default function GameOverModal({ score, bestScore, bestCombo, onRestart, mode }) {
+export default function GameOverModal({ score, bestScore, bestCombo, level, dailyBest, onRestart, mode }) {
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const isDaily = mode === 'daily';
+  const isLevel = mode === 'level';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,16 +30,31 @@ export default function GameOverModal({ score, bestScore, bestCombo, onRestart, 
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2 className="modal-title">Game Over</h2>
+        <h2 className="modal-title">
+          {isDaily ? '📅 Thử thách hôm nay' : 'Game Over'}
+        </h2>
         <div className="modal-scores">
           <div className="modal-score-item">
             <span>Điểm của bạn</span>
             <strong>{score.toLocaleString()}</strong>
           </div>
-          <div className="modal-score-item">
-            <span>Điểm cao nhất</span>
-            <strong>{bestScore.toLocaleString()}</strong>
-          </div>
+          {isDaily ? (
+            <div className="modal-score-item">
+              <span>Best hôm nay</span>
+              <strong>{Math.max(score, dailyBest ?? 0).toLocaleString()}</strong>
+            </div>
+          ) : (
+            <div className="modal-score-item">
+              <span>Điểm cao nhất</span>
+              <strong>{bestScore.toLocaleString()}</strong>
+            </div>
+          )}
+          {isLevel && (
+            <div className="modal-score-item">
+              <span>Level đạt</span>
+              <strong>{level}</strong>
+            </div>
+          )}
           {bestCombo > 1 && (
             <div className="modal-score-item modal-score-item--combo">
               <span>Combo cao nhất</span>
@@ -48,7 +66,11 @@ export default function GameOverModal({ score, bestScore, bestCombo, onRestart, 
         {!submitted ? (
           <form onSubmit={handleSubmit} className="leaderboard-form">
             <p className="form-label">
-              {mode === 'level' ? 'Chơi lại từ Level 1!' : 'Lưu điểm lên bảng xếp hạng'}
+              {isLevel
+                ? 'Chơi lại từ Level 1!'
+                : isDaily
+                ? 'Lưu điểm daily lên bảng xếp hạng'
+                : 'Lưu điểm lên bảng xếp hạng'}
             </p>
             <input
               type="text"

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { ArrowLeft, Pause, Play, Volume2, VolumeX, BarChart2, Music } from 'lucide-react';
+import { ArrowLeft, Pause, Play, Volume2, VolumeX, BarChart2, Music, Cog } from 'lucide-react';
 import Board from './components/Board';
 import BlockTray from './components/BlockTray';
 import ScorePanel from './components/ScorePanel';
@@ -14,12 +14,17 @@ import PowerUpBar from './components/PowerUpBar';
 import ComboEffect from './components/ComboEffect';
 import Confetti from './components/Confetti';
 import FloatingScore from './components/FloatingScore';
+import LevelComplete from './components/LevelComplete';
+import Settings from './components/Settings';
+import StatsScreen from './components/StatsScreen';
+import TutorialOverlay from './components/TutorialOverlay';
 import { useGame } from './hooks/useGame';
 import { useSound } from './hooks/useSound';
 import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { getLevelTarget } from './game/levels';
 import { getTheme } from './game/themes';
 import { BOARD_SIZE } from './game/board';
+import { getDailyBest, saveDailyScore } from './game/daily';
 import './App.css';
 
 export default function App() {
@@ -28,8 +33,13 @@ export default function App() {
   const [levelComplete, setLevelComplete] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [clearEvent, setClearEvent] = useState(null);
   const [comboEvent, setComboEvent] = useState(null);
+  const [bestLevel, setBestLevel] = useState(() => Number(localStorage.getItem('bb_best_level') ?? 1));
+  const [dailyBest, setDailyBest] = useState(getDailyBest);
 
   const ytPlayer = useYouTubePlayer();
 
@@ -37,7 +47,7 @@ export default function App() {
   const theme = getTheme(mode === 'level' ? level : 1);
 
   const {
-    board, blocks, score, bestScore, combo, bestCombo,
+    board, blocks, score, bestScore, combo, bestCombo, totalLinesCleared,
     isGameOver, isPaused,
     placedCells, flashCells, clearedCells,
     lastGained, newBlocksKey,
@@ -45,29 +55,34 @@ export default function App() {
     draggingIndex, setDraggingIndex,
     dragRef, placeableBlocks,
     powerups, activePowerup,
-    tryPlaceBlock, pause, resume, restart, restore,
+    tryPlaceBlock, shuffleBlocks, pause, resume, restart, restore,
     selectPowerup, firePowerup,
-  } = useGame(theme.colors);
+  } = useGame(theme.colors, mode);
 
-  const { play, muted, toggleMute } = useSound();
+  const { play, muted, toggleMute, sfxVolume, setSfxVolume } = useSound();
   const ghostRef = useRef(null);
   const boardRef = useRef(null);
-  const vibrate  = (pattern) => navigator.vibrate?.(pattern);
 
+  const vibrate = useCallback((pattern) => {
+    if (localStorage.getItem('bb_vibration') !== 'false') {
+      navigator.vibrate?.(pattern);
+    }
+  }, []);
+
+  // Level complete detection (no auto-advance — modal controls it)
   useEffect(() => {
     if (mode === 'level' && !levelComplete && !isGameOver && score >= levelTarget) {
-      setLevelComplete(true);
+      setLevelComplete(true); // eslint-disable-line react-hooks/set-state-in-effect
       play('clear');
-      setTimeout(() => {
-        setLevel(l => l + 1);
-        setLevelComplete(false);
-        setComboEvent(null);
-        setClearEvent(null);
-        restart();
-      }, 1500);
+      const nextLvl = level + 1;
+      if (nextLvl > bestLevel) {
+        setBestLevel(nextLvl); // eslint-disable-line react-hooks/set-state-in-effect
+        localStorage.setItem('bb_best_level', nextLvl);
+      }
     }
-  }, [score, mode, levelTarget, levelComplete, isGameOver, level, play, restart]);
+  }, [score, mode, levelTarget, levelComplete, isGameOver, level, play, bestLevel]);
 
+  // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape' || isGameOver || levelComplete || !mode) return;
@@ -78,44 +93,72 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [isPaused, isGameOver, levelComplete, mode, activePowerup, selectPowerup, pause, resume]);
 
+  // Game over: play sound + save stats
   useEffect(() => {
-    if (isGameOver) play('gameover');
+    if (isGameOver) {
+      play('gameover');
+      try {
+        const raw = localStorage.getItem('bb_stats');
+        const stats = raw ? JSON.parse(raw) : {};
+        localStorage.setItem('bb_stats', JSON.stringify({
+          gamesPlayed:   (stats.gamesPlayed   ?? 0) + 1,
+          totalScore:    (stats.totalScore    ?? 0) + score,
+          bestComboEver: Math.max(stats.bestComboEver  ?? 0, bestCombo),
+          bestLevelEver: Math.max(stats.bestLevelEver  ?? 1, mode === 'level' ? level : 1),
+          linesCleared:  (stats.linesCleared  ?? 0) + totalLinesCleared,
+          dailyPlays:    (stats.dailyPlays    ?? 0) + (mode === 'daily' ? 1 : 0),
+        }));
+        if (mode === 'daily') {
+          saveDailyScore(score);
+          setDailyBest(getDailyBest()); // eslint-disable-line react-hooks/set-state-in-effect
+        }
+        if (mode === 'level') {
+          const nb = Math.max(bestLevel, level);
+          if (nb > bestLevel) {
+            setBestLevel(nb); // eslint-disable-line react-hooks/set-state-in-effect
+            localStorage.setItem('bb_best_level', nb);
+          }
+        }
+      } catch { /* silent */ }
+    }
   }, [isGameOver]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Clear animation event
   useEffect(() => {
     if (clearedCells.size > 0) setClearEvent({ key: Date.now(), cells: new Set(clearedCells) });
   }, [clearedCells]);
 
+  // Combo event
   useEffect(() => {
     if (combo > 1) setComboEvent({ key: Date.now(), count: combo });
   }, [combo]);
 
-  // Bump this whenever block color format changes to invalidate old sessions
-  const SESSION_VERSION = 3;
-
-  // Persist mid-game state so closing the tab doesn't lose progress
+  // Session persistence (skip daily)
+  const SESSION_VERSION = 4;
   useEffect(() => {
-    if (!mode || isGameOver || levelComplete) {
+    if (!mode || mode === 'daily' || isGameOver || levelComplete) {
       localStorage.removeItem('bb_session');
       return;
     }
     try {
-      localStorage.setItem('bb_session', JSON.stringify({ v: SESSION_VERSION, mode, level, board, blocks, score, combo, powerups }));
+      localStorage.setItem('bb_session', JSON.stringify({
+        v: SESSION_VERSION, mode, level, board, blocks, score, combo, powerups,
+      }));
     } catch {}
   }, [board, blocks, score, combo, mode, level, isGameOver, levelComplete]);
 
-  // Restore on first page-load (runs once, after first render)
+  // Restore on first load
   useEffect(() => {
     try {
       const s = JSON.parse(localStorage.getItem('bb_session') ?? 'null');
-      if (!s?.mode || !Array.isArray(s?.board) || s.v !== SESSION_VERSION) {
+      if (!s?.mode || !Array.isArray(s?.board) || s.v !== SESSION_VERSION || s.mode === 'daily') {
         localStorage.removeItem('bb_session');
         return;
       }
       setMode(s.mode);
       setLevel(s.level ?? 1);
       restore(s);
-    } catch {
+    } catch { /* corrupted session — clear it */
       localStorage.removeItem('bb_session');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -141,9 +184,15 @@ export default function App() {
   }, [isPaused, isGameOver, levelComplete, activePowerup, selectPowerup, dragRef, setDraggingIndex, updateGhost]);
 
   const handleSelectPowerup = useCallback((key) => {
+    if (key === 'shuffle') {
+      shuffleBlocks();
+      play('shuffle');
+      vibrate([15, 10, 25]);
+      return;
+    }
     selectPowerup(key);
     play('powerup');
-  }, [selectPowerup, play]);
+  }, [selectPowerup, shuffleBlocks, play, vibrate]);
 
   const handlePowerupTarget = useCallback((row, col) => {
     const cleared = firePowerup(row, col);
@@ -151,15 +200,13 @@ export default function App() {
       play('clear');
       vibrate([20, 10, 50]);
     }
-  }, [firePowerup, play]);
+  }, [firePowerup, play, vibrate]);
 
-  // Convert pointer position → board (row, col) using ghost visual top-left corner.
-  // Ghost CSS: translate(-50%, -130%), so visual top-left = (clientX - ghostW/2, clientY - ghostH*1.3)
   const getAdjustedCoords = useCallback((clientX, clientY) => {
     if (!boardRef.current) return null;
-    const ghostEl  = ghostRef.current;
-    const ghostW   = ghostEl?.getBoundingClientRect().width  ?? 0;
-    const ghostH   = ghostEl?.getBoundingClientRect().height ?? 0;
+    const ghostEl = ghostRef.current;
+    const ghostW  = ghostEl?.getBoundingClientRect().width  ?? 0;
+    const ghostH  = ghostEl?.getBoundingClientRect().height ?? 0;
     const adjustedX = clientX - ghostW / 2;
     const adjustedY = clientY - ghostH * 1.3;
     const rect = boardRef.current.getBoundingClientRect();
@@ -168,13 +215,12 @@ export default function App() {
     return { row, col };
   }, []);
 
-  // Ghost snaps to board cell, then cells pop in
   const snapAndPlace = useCallback((idx, row, col) => {
     setPreviewPos(null);
     dragRef.current.active = false;
 
     const ghost = ghostRef.current;
-    const board = boardRef.current;
+    const boardEl = boardRef.current;
 
     const doPlace = () => {
       document.body.style.cursor = '';
@@ -192,16 +238,13 @@ export default function App() {
       }
     };
 
-    if (!ghost || !board) { doPlace(); return; }
+    if (!ghost || !boardEl) { doPlace(); return; }
 
     const ghostW = ghost.offsetWidth;
     const ghostH = ghost.offsetHeight;
-    const boardRect = board.getBoundingClientRect();
+    const boardRect = boardEl.getBoundingClientRect();
     const cellSize  = boardRect.width / BOARD_SIZE;
 
-    // CSS transform: translate(-50%, -130%)
-    // visual.left = style.left - ghostW*0.5  →  targetLeft = cell_x + ghostW*0.5
-    // visual.top  = style.top  - ghostH*1.3  →  targetTop  = cell_y + ghostH*1.3
     const targetLeft = boardRect.left + col * cellSize + ghostW * 0.5;
     const targetTop  = boardRect.top  + row * cellSize + ghostH * 1.3;
 
@@ -211,7 +254,7 @@ export default function App() {
       'transform 0.1s cubic-bezier(.3,1.5,.4,1)',
       'opacity 0.07s ease 0.04s',
     ].join(',');
-    void ghost.getBoundingClientRect(); // force reflow so transition fires
+    void ghost.getBoundingClientRect();
     ghost.style.left      = `${targetLeft}px`;
     ghost.style.top       = `${targetTop}px`;
     ghost.style.transform = 'translate(-50%,-130%) scale(0.8)';
@@ -223,7 +266,7 @@ export default function App() {
       ghost.style.opacity    = '';
       doPlace();
     }, 105);
-  }, [dragRef, ghostRef, boardRef, tryPlaceBlock, play, setDraggingIndex, setPreviewPos]);
+  }, [dragRef, ghostRef, boardRef, tryPlaceBlock, play, setDraggingIndex, setPreviewPos, vibrate]);
 
   useEffect(() => {
     const onMove = (e) => {
@@ -272,28 +315,39 @@ export default function App() {
     setLevel(startLevel);
     setLevelComplete(false);
     resetTransientUI();
-    restart();
+    restart(selectedMode);
+    if (!localStorage.getItem('bb_tutorial_done')) {
+      setShowTutorial(true);
+    }
   }, [restart, resetTransientUI]);
 
   const handleRetryLevel = useCallback(() => {
     setLevelComplete(false);
     resetTransientUI();
-    restart();
-  }, [restart, resetTransientUI]);
+    restart(mode);
+  }, [restart, resetTransientUI, mode]);
 
   const handleGameOverRestart = useCallback(() => {
     if (mode === 'level') setLevel(1);
     setLevelComplete(false);
     resetTransientUI();
-    restart();
+    restart(mode);
   }, [mode, restart, resetTransientUI]);
 
   const handleBackToMenu = useCallback(() => {
     setMode(null);
     setLevelComplete(false);
     resetTransientUI();
-    restart();
+    restart(null);
   }, [restart, resetTransientUI]);
+
+  // Level complete → next level (manual via modal button)
+  const handleLevelNext = useCallback(() => {
+    setLevel(l => l + 1);
+    setLevelComplete(false);
+    resetTransientUI();
+    restart(mode);
+  }, [mode, restart, resetTransientUI]);
 
   const isNearGameOver = !isGameOver && !levelComplete &&
     blocks.some(Boolean) &&
@@ -311,7 +365,23 @@ export default function App() {
   if (!mode) {
     return (
       <div className="app" data-block="jelly">
-        <ModeSelect onSelect={handleSelectMode} />
+        <ModeSelect
+          onSelect={handleSelectMode}
+          bestLevel={bestLevel}
+          dailyBest={dailyBest}
+          onStats={() => setShowStats(true)}
+          onSettings={() => setShowSettings(true)}
+        />
+        {showStats && <StatsScreen onClose={() => setShowStats(false)} />}
+        {showSettings && (
+          <Settings
+            sfxVolume={sfxVolume}
+            setSfxVolume={setSfxVolume}
+            muted={muted}
+            onToggleMute={toggleMute}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
       </div>
     );
   }
@@ -323,7 +393,7 @@ export default function App() {
           <ArrowLeft size={18} strokeWidth={2.5} />
         </button>
         <h1 className="app-title">
-          {mode === 'level' ? `Level ${level}` : 'Block Blast'}
+          {mode === 'level' ? `Level ${level}` : mode === 'daily' ? '📅 Hôm nay' : 'Block Blast'}
         </h1>
         <div className="header-actions">
           {!isGameOver && !levelComplete && !showLeaderboard && (
@@ -350,6 +420,13 @@ export default function App() {
             title="Nhạc YouTube"
           >
             <Music size={16} strokeWidth={2.2} />
+          </button>
+          <button
+            className="btn btn-icon"
+            onClick={() => setShowSettings(s => !s)}
+            title="Cài đặt"
+          >
+            <Cog size={16} strokeWidth={2.2} />
           </button>
           {mode === 'classic' && (
             <button
@@ -427,7 +504,24 @@ export default function App() {
         />
       )}
       {isGameOver && !levelComplete && (
-        <GameOverModal score={score} bestScore={bestScore} bestCombo={bestCombo} onRestart={handleGameOverRestart} mode={mode} />
+        <GameOverModal
+          score={score}
+          bestScore={bestScore}
+          bestCombo={bestCombo}
+          level={level}
+          dailyBest={dailyBest}
+          onRestart={handleGameOverRestart}
+          mode={mode}
+        />
+      )}
+      {levelComplete && !isGameOver && (
+        <LevelComplete
+          level={level}
+          score={score}
+          onNext={handleLevelNext}
+          onRetry={handleRetryLevel}
+          onMenu={handleBackToMenu}
+        />
       )}
       {showMusic && (
         <MusicPanel
@@ -441,9 +535,19 @@ export default function App() {
           changeVolume={ytPlayer.changeVolume}
         />
       )}
+      {showSettings && (
+        <Settings
+          sfxVolume={sfxVolume}
+          setSfxVolume={setSfxVolume}
+          muted={muted}
+          onToggleMute={toggleMute}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
       <ParticlesCanvas clearEvent={clearEvent} boardRef={boardRef} />
       {comboEvent && <ComboEffect key={comboEvent.key} count={comboEvent.count} />}
       {levelComplete && <Confetti />}
+      {showTutorial && <TutorialOverlay onDone={() => setShowTutorial(false)} />}
     </div>
   );
 }

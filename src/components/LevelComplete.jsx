@@ -7,7 +7,7 @@ function Stars({ count }) {
       {[1, 2, 3].map(i => (
         <Star
           key={i}
-          size={40}
+          size={42}
           strokeWidth={1.5}
           className={`star ${i <= count ? 'star--lit' : 'star--dim'}`}
           fill={i <= count ? 'currentColor' : 'none'}
@@ -25,13 +25,21 @@ export default function LevelComplete({ level, score, onNext, onRetry, onMenu })
   return (
     <div className="modal-overlay">
       <div className="modal modal--level-complete">
+        <div className="lc-celebration">
+          <span className="lc-firework">🎉</span>
+          <span className="lc-firework lc-firework--2">✨</span>
+          <span className="lc-firework lc-firework--3">🎊</span>
+        </div>
+
         <p className="level-badge">LEVEL {level}</p>
-        <h2 className="modal-title modal-title--complete">Hoàn thành!</h2>
+        <h2 className="modal-title modal-title--complete lc-title-anim">
+          Hoàn thành!
+        </h2>
         <Stars count={stars} />
 
         <div className="lc-score-row">
           <span className="lc-label">Điểm đạt được</span>
-          <strong className="lc-value">{score.toLocaleString()}</strong>
+          <strong className="lc-value lc-value--pop">{score.toLocaleString()}</strong>
         </div>
         <div className="lc-score-row lc-score-row--target">
           <span className="lc-label">Mục tiêu Level {level + 1}</span>
