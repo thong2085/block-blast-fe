@@ -31,7 +31,7 @@ export default function GameOverModal({ score, bestScore, bestCombo, level, dail
     <div className="modal-overlay">
       <div className="modal">
         <h2 className="modal-title">
-          {isDaily ? '📅 Thử thách hôm nay' : 'Game Over'}
+          {isDaily ? `${<Calendar size={20} />} Thử thách hôm nay` : 'Em đã cố gắng rồi 🌸'}
         </h2>
         <div className="modal-scores">
           <div className="modal-score-item">

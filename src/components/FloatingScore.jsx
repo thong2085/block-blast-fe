@@ -6,8 +6,8 @@ export default function FloatingScore({ gained, combo, boardClear, boardRef }) {
   const y = rect.top  + rect.height * 0.32;
 
   const isCombo = combo > 1;
-  const label   = boardClear ? 'BOARD CLEAR! ✨'
-                : isCombo    ? `×${combo} COMBO`
+  const label   = boardClear ? 'Quét sạch! 🎉'
+                : isCombo    ? `×${combo} Combo!`
                 : null;
 
   const cls = ['floating-score']

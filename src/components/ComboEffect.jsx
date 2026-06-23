@@ -1,4 +1,4 @@
-const LABELS = ['', '', 'NICE!', 'GREAT!', 'AMAZING!', 'INSANE!'];
+const LABELS = ['', 'Hay đó! 👏', 'Em giỏi lắm!', 'Cố lên nhé 🌸', 'Không thể tin được 🔥', 'Đỉnh nóc kịch trần 🔥'];
 
 export default function ComboEffect({ count }) {
   const label = LABELS[Math.min(count, LABELS.length - 1)];

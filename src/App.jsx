@@ -23,7 +23,7 @@ import { useYouTubePlayer } from './hooks/useYouTubePlayer';
 import { getLevelTarget } from './game/levels';
 import { getTheme } from './game/themes';
 import { BOARD_SIZE } from './game/board';
-import { getDailyBest, saveDailyScore } from './game/daily';
+import { getDailyBest, saveDailyScore, getStreak, updateStreak } from './game/daily';
 import './App.css';
 
 export default function App() {
@@ -39,6 +39,8 @@ export default function App() {
   const [comboEvent, setComboEvent] = useState(null);
   const [bestLevel, setBestLevel] = useState(() => Number(localStorage.getItem('bb_best_level') ?? 1));
   const [dailyBest, setDailyBest] = useState(getDailyBest);
+  const [streak, setStreak]       = useState(getStreak);
+  const [bgPhoto, setBgPhoto]     = useState(() => localStorage.getItem('bb_bg_image') || null);
 
   const ytPlayer = useYouTubePlayer();
 
@@ -110,7 +112,9 @@ export default function App() {
         }));
         if (mode === 'daily') {
           saveDailyScore(score);
+          updateStreak();
           setDailyBest(getDailyBest()); // eslint-disable-line react-hooks/set-state-in-effect
+          setStreak(getStreak());        // eslint-disable-line react-hooks/set-state-in-effect
         }
         if (mode === 'level') {
           const nb = Math.max(bestLevel, level);
@@ -371,6 +375,7 @@ export default function App() {
           onSelect={handleSelectMode}
           bestLevel={bestLevel}
           dailyBest={dailyBest}
+          streak={streak}
           onStats={() => setShowStats(true)}
           onSettings={() => setShowSettings(true)}
         />
@@ -381,6 +386,8 @@ export default function App() {
             setSfxVolume={setSfxVolume}
             muted={muted}
             onToggleMute={toggleMute}
+            bgPhoto={bgPhoto}
+            onSetBgPhoto={setBgPhoto}
             onClose={() => setShowSettings(false)}
           />
         )}
@@ -450,6 +457,7 @@ export default function App() {
             <Board
               board={board}
               blocks={blocks}
+              bgPhoto={bgPhoto}
               draggingIndex={draggingIndex}
               previewPos={previewPos}
               clearedCells={clearedCells}
@@ -534,6 +542,8 @@ export default function App() {
           setSfxVolume={setSfxVolume}
           muted={muted}
           onToggleMute={toggleMute}
+          bgPhoto={bgPhoto}
+          onSetBgPhoto={setBgPhoto}
           onClose={() => setShowSettings(false)}
         />
       )}

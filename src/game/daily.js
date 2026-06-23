@@ -35,3 +35,21 @@ export function saveDailyScore(score) {
   const prev = getDailyBest();
   if (score > prev) localStorage.setItem(key, String(score));
 }
+
+export function getStreak() {
+  return parseInt(localStorage.getItem('bb_streak_count') ?? '0', 10) || 0;
+}
+
+export function updateStreak() {
+  const today = getTodayKey();
+  const last  = localStorage.getItem('bb_streak_last');
+  if (last === today) return;
+
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const yesterday = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  const next = last === yesterday ? getStreak() + 1 : 1;
+  localStorage.setItem('bb_streak_count', String(next));
+  localStorage.setItem('bb_streak_last', today);
+}

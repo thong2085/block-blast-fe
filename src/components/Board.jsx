@@ -12,6 +12,7 @@ export default function Board({
   activePowerup,
   onPowerupTarget,
   isNearGameOver,
+  bgPhoto,
 }) {
   const internalRef = useRef(null);
   const boardRef = externalBoardRef ?? internalRef;
@@ -89,6 +90,7 @@ export default function Board({
       className={`board${activePowerup ? ' board--targeting' : ''}${isNearGameOver ? ' board--danger' : ''}`}
       data-powerup={activePowerup || undefined}
       onPointerLeave={activePowerup ? () => setHoverCell(null) : onBoardPointerLeave}
+      style={bgPhoto ? { background: `linear-gradient(rgba(255,200,220,0.18),rgba(255,200,220,0.18)), url(${bgPhoto}) center/cover` } : undefined}
     >
       {board.map((rowArr, r) =>
         rowArr.map((color, c) => {
