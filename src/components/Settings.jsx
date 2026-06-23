@@ -1,13 +1,28 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X, Volume2, VolumeX } from 'lucide-react';
 
 export default function Settings({ sfxVolume, setSfxVolume, muted, onToggleMute, onClose }) {
-  const [vibration, setVibration] = useState(() => localStorage.getItem('bb_vibration') !== 'false');
+  const [vibration, setVibration]     = useState(() => localStorage.getItem('bb_vibration') !== 'false');
+  const [confirmReset, setConfirmReset] = useState(false);
+  const resetTimerRef = useRef(null);
 
   const handleVibration = () => {
     const next = !vibration;
     setVibration(next);
     localStorage.setItem('bb_vibration', String(next));
+  };
+
+  const handleResetClick = () => {
+    if (!confirmReset) {
+      setConfirmReset(true);
+      resetTimerRef.current = setTimeout(() => setConfirmReset(false), 3000);
+    } else {
+      clearTimeout(resetTimerRef.current);
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('bb_'))
+        .forEach(k => localStorage.removeItem(k));
+      window.location.reload();
+    }
   };
 
   return (
@@ -54,6 +69,13 @@ export default function Settings({ sfxVolume, setSfxVolume, muted, onToggleMute,
 
         <button className="btn btn-secondary" style={{ width: '100%', marginTop: 6 }} onClick={onClose}>
           Xong
+        </button>
+
+        <button
+          className={`settings-reset-btn${confirmReset ? ' settings-reset-btn--confirm' : ''}`}
+          onClick={handleResetClick}
+        >
+          {confirmReset ? '⚠️ Xác nhận xóa tất cả?' : 'Xóa toàn bộ dữ liệu'}
         </button>
       </div>
     </div>

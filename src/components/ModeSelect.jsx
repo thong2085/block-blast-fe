@@ -14,7 +14,7 @@ export default function ModeSelect({ onSelect, bestLevel, dailyBest, onStats, on
           <span className="mode-card-name">Level</span>
           <span className="mode-card-desc">Vượt qua từng màn liên tiếp</span>
           {bestLevel > 1
-            ? <span className="mode-card-record">Level cao nhất: {bestLevel}</span>
+            ? <span className="mode-card-record">🏆 Level cao nhất: {bestLevel}</span>
             : <span className="mode-card-hint">Thua thì chơi lại từ Level 1</span>
           }
         </button>
@@ -31,7 +31,7 @@ export default function ModeSelect({ onSelect, bestLevel, dailyBest, onStats, on
           <span className="mode-card-name">Hôm nay</span>
           <span className="mode-card-desc">Thử thách mỗi ngày</span>
           {dailyBest > 0
-            ? <span className="mode-card-record">Điểm hôm nay: {dailyBest.toLocaleString()}</span>
+            ? <span className="mode-card-record mode-card-record--played">✓ {dailyBest.toLocaleString()} điểm</span>
             : <span className="mode-card-hint">Chưa chơi hôm nay</span>
           }
         </button>

@@ -1,12 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { ArrowLeft, Pause, Play, Volume2, VolumeX, BarChart2, Music, Cog } from 'lucide-react';
+import { ArrowLeft, Pause, Play, Volume2, VolumeX, Music, Cog } from 'lucide-react';
 import Board from './components/Board';
 import BlockTray from './components/BlockTray';
 import ScorePanel from './components/ScorePanel';
 import GameOverModal from './components/GameOverModal';
 import PauseModal from './components/PauseModal';
 import ModeSelect from './components/ModeSelect';
-import Leaderboard from './components/Leaderboard';
 import BlockPreview from './components/BlockPreview';
 import MusicPanel from './components/MusicPanel';
 import ParticlesCanvas from './components/ParticlesCanvas';
@@ -31,7 +30,7 @@ export default function App() {
   const [mode, setMode] = useState(null);
   const [level, setLevel] = useState(1);
   const [levelComplete, setLevelComplete] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [shuffled, setShuffled] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -73,6 +72,7 @@ export default function App() {
   useEffect(() => {
     if (mode === 'level' && !levelComplete && !isGameOver && score >= levelTarget) {
       setLevelComplete(true); // eslint-disable-line react-hooks/set-state-in-effect
+      setComboEvent(null);    // eslint-disable-line react-hooks/set-state-in-effect
       play('clear');
       const nextLvl = level + 1;
       if (nextLvl > bestLevel) {
@@ -188,6 +188,8 @@ export default function App() {
       shuffleBlocks();
       play('shuffle');
       vibrate([15, 10, 25]);
+      setShuffled(true);
+      setTimeout(() => setShuffled(false), 600);
       return;
     }
     selectPowerup(key);
@@ -396,7 +398,7 @@ export default function App() {
           {mode === 'level' ? `Level ${level}` : mode === 'daily' ? '📅 Hôm nay' : 'Block Blast'}
         </h1>
         <div className="header-actions">
-          {!isGameOver && !levelComplete && !showLeaderboard && (
+          {!isGameOver && !levelComplete && (
             <button
               className="btn btn-icon"
               onClick={isPaused ? resume : pause}
@@ -428,15 +430,6 @@ export default function App() {
           >
             <Cog size={16} strokeWidth={2.2} />
           </button>
-          {mode === 'classic' && (
-            <button
-              className="btn btn-icon"
-              onClick={() => setShowLeaderboard(s => !s)}
-              title="Bảng xếp hạng"
-            >
-              <BarChart2 size={16} strokeWidth={2.2} />
-            </button>
-          )}
         </div>
       </header>
 
@@ -449,11 +442,10 @@ export default function App() {
           mode={mode}
           level={level}
           levelTarget={levelTarget}
+          dailyBest={dailyBest}
         />
 
-        {showLeaderboard ? (
-          <Leaderboard visible={showLeaderboard} />
-        ) : (
+        {(
           <>
             <Board
               board={board}
@@ -480,6 +472,7 @@ export default function App() {
               newBlocksKey={newBlocksKey}
               placeableBlocks={placeableBlocks}
               onBlockPointerDown={handleBlockPointerDown}
+              shuffled={shuffled}
             />
           </>
         )}

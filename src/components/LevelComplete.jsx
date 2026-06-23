@@ -1,5 +1,6 @@
 import { ChevronRight, RotateCcw, Home, Star } from 'lucide-react';
 import { getStars, getLevelTarget } from '../game/levels';
+import { useCountUp } from '../hooks/useCountUp';
 
 function Stars({ count }) {
   return (
@@ -18,9 +19,10 @@ function Stars({ count }) {
 }
 
 export default function LevelComplete({ level, score, onNext, onRetry, onMenu }) {
-  const target     = getLevelTarget(level);
-  const stars      = getStars(score, target);
-  const nextTarget = getLevelTarget(level + 1).toLocaleString();
+  const target      = getLevelTarget(level);
+  const stars       = getStars(score, target);
+  const nextTarget  = getLevelTarget(level + 1).toLocaleString();
+  const displayScore = useCountUp(score);
 
   return (
     <div className="modal-overlay">
@@ -32,14 +34,12 @@ export default function LevelComplete({ level, score, onNext, onRetry, onMenu })
         </div>
 
         <p className="level-badge">LEVEL {level}</p>
-        <h2 className="modal-title modal-title--complete lc-title-anim">
-          Hoàn thành!
-        </h2>
+        <h2 className="modal-title modal-title--complete lc-title-anim">Hoàn thành!</h2>
         <Stars count={stars} />
 
         <div className="lc-score-row">
           <span className="lc-label">Điểm đạt được</span>
-          <strong className="lc-value lc-value--pop">{score.toLocaleString()}</strong>
+          <strong className="lc-value lc-value--pop">{displayScore.toLocaleString()}</strong>
         </div>
         <div className="lc-score-row lc-score-row--target">
           <span className="lc-label">Mục tiêu Level {level + 1}</span>

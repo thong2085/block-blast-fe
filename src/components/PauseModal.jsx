@@ -8,7 +8,7 @@ export default function PauseModal({ onResume, onRestart }) {
           <Pause size={32} strokeWidth={2.5} />
         </div>
         <h2 className="modal-title modal-title--pause">Tạm dừng</h2>
-        <p className="modal-hint">Nhấn ESC hoặc bấm ra ngoài để tiếp tục</p>
+        <p className="modal-hint">Bấm ra ngoài hoặc nhấn Tiếp tục</p>
         <div className="pause-actions">
           <button className="btn btn-primary" onClick={onResume}>
             <Play size={16} strokeWidth={2.5} />

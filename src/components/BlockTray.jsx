@@ -1,8 +1,8 @@
 import BlockPreview from './BlockPreview';
 
-export default function BlockTray({ blocks, draggingIndex, newBlocksKey, placeableBlocks, onBlockPointerDown }) {
+export default function BlockTray({ blocks, draggingIndex, newBlocksKey, placeableBlocks, onBlockPointerDown, shuffled }) {
   return (
-    <div className="block-tray">
+    <div className={`block-tray${shuffled ? ' block-tray--shuffle' : ''}`}>
       {blocks.map((block, i) => {
         const placeable = placeableBlocks?.[i] ?? true;
         const dim       = block && !placeable;

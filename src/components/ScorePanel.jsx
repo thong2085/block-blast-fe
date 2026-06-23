@@ -1,44 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useCountUp } from '../hooks/useCountUp';
 
-function useCountUp(target) {
-  const [display, setDisplay] = useState(target);
-  const displayRef = useRef(target);
-  const animRef    = useRef(null);
-
-  useEffect(() => {
-    if (animRef.current) clearInterval(animRef.current);
-    const prev = displayRef.current;
-    if (target <= prev) {
-      displayRef.current = target;
-      setDisplay(target);
-      return;
-    }
-    const diff  = target - prev;
-    const steps = Math.min(20, Math.max(4, Math.ceil(diff / 30)));
-    let step = 0;
-    animRef.current = setInterval(() => {
-      step++;
-      if (step >= steps) {
-        clearInterval(animRef.current);
-        displayRef.current = target;
-        setDisplay(target);
-      } else {
-        const val = Math.round(prev + diff * (step / steps));
-        displayRef.current = val;
-        setDisplay(val);
-      }
-    }, Math.min(30, 500 / steps));
-    return () => clearInterval(animRef.current);
-  }, [target]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return display;
-}
-
-export default function ScorePanel({ score, bestScore, combo, lastGained, mode, level, levelTarget }) {
-  const isLevel    = mode === 'level';
-  const progress   = isLevel ? Math.min(score / levelTarget, 1) : 0;
+export default function ScorePanel({ score, bestScore, combo, lastGained, mode, level, levelTarget, dailyBest }) {
+  const isLevel   = mode === 'level';
+  const isDaily   = mode === 'daily';
+  const progress  = isLevel ? Math.min(score / levelTarget, 1) : 0;
   const displayScore = useCountUp(score);
-  const isNewBest  = !isLevel && score > 0 && score >= bestScore;
+  const isNewBest = !isLevel && !isDaily && score > 0 && score >= bestScore;
 
   return (
     <div className="score-panel">
@@ -78,8 +45,13 @@ export default function ScorePanel({ score, bestScore, combo, lastGained, mode, 
             )}
           </div>
           <div className="score-item">
-            <span className="score-label">BEST</span>
-            <span className="score-value">{bestScore.toLocaleString()}</span>
+            <span className="score-label">{isDaily ? 'HÔM NAY' : 'BEST'}</span>
+            <span className="score-value">
+              {isDaily
+                ? Math.max(score, dailyBest ?? 0).toLocaleString()
+                : bestScore.toLocaleString()
+              }
+            </span>
           </div>
         </>
       )}
